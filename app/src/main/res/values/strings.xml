@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Song Info Winchester</string>
+    <string name="song_name">Song name</string>
+    <string name="search">Search</string>
+    <string name="more_details">More Details</string>
+    <string name="open_song">Open Song</string>
+</resources>
