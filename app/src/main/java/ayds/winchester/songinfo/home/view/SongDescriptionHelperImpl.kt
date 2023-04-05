@@ -43,4 +43,18 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
         return fechaNueva
     }
 
+    fun formatoFechaAño(fechaRecibida: String):String{
+        val fechaEntero: Int = fechaRecibida.toInt();
+        var fechaNueva: String = fechaRecibida;
+        if (añoBisiesto(fechaEntero))
+            fechaNueva += " (leap year)"
+        else
+            fechaNueva+= " (not a leap year) "
+
+        return fechaNueva
+    }
+
+    fun añoBisiesto(n:Int) = ( (n % 4 == 0 && n % 100 != 0 ) || n % 400 == 0)
+
+
 }
