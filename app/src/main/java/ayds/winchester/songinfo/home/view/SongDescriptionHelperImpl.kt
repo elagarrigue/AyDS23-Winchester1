@@ -24,7 +24,7 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
                         when (song.releaseDatePrecision){
                             "day" -> "Release date: ${formatoFechaDia(song.releaseDate)}\n"
                             "month" -> "Release date: ${formatoFechaMes(song.releaseDate)}\n"
-                            "year" -> "Release date: \n"
+                            "year" -> "Release date: ${formatoFechaAño(song.releaseDate)}\n"
                             else -> {}
                         }
             else -> "Song not found"
