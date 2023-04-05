@@ -1,8 +1,11 @@
 package ayds.winchester.songinfo.home.view
 
-import ayds.winchester.songinfo.home.model.entities.Song.EmptySong
 import ayds.winchester.songinfo.home.model.entities.Song
+import ayds.winchester.songinfo.home.model.entities.Song.EmptySong
 import ayds.winchester.songinfo.home.model.entities.Song.SpotifySong
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 interface SongDescriptionHelper {
     fun getSongDescriptionText(song: Song = EmptySong): String
@@ -18,8 +21,21 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
                 }\n" +
                         "Artist: ${song.artistName}\n" +
                         "Album: ${song.albumName}\n" +
-                        "Year: ${song.year}"
+                        when (song.releaseDatePrecision){
+                            "day" -> "Release date: ${formatoFechaDia(song.releaseDate)}\n"
+                            "month" -> "Release date: \n"
+                            "year" -> "Release date: \n"
+                            else -> {}
+                        }
+                        //"Year: ${song.year}"
             else -> "Song not found"
         }
     }
+
+    fun formatoFechaDia(fechaRecibida: String):String{
+        val fechaConcreta: Date = SimpleDateFormat("yyyy-MM-dd").parse(fechaRecibida)
+        val fechaNueva: String = SimpleDateFormat("dd/MM/yyyy").format(fechaConcreta)
+        return fechaNueva
+    }
+
 }
