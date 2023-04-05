@@ -23,11 +23,10 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
                         "Album: ${song.albumName}\n" +
                         when (song.releaseDatePrecision){
                             "day" -> "Release date: ${formatoFechaDia(song.releaseDate)}\n"
-                            "month" -> "Release date: \n"
+                            "month" -> "Release date: ${formatoFechaMes(song.releaseDate)}\n"
                             "year" -> "Release date: \n"
                             else -> {}
                         }
-                        //"Year: ${song.year}"
             else -> "Song not found"
         }
     }
@@ -35,6 +34,12 @@ internal class SongDescriptionHelperImpl : SongDescriptionHelper {
     fun formatoFechaDia(fechaRecibida: String):String{
         val fechaConcreta: Date = SimpleDateFormat("yyyy-MM-dd").parse(fechaRecibida)
         val fechaNueva: String = SimpleDateFormat("dd/MM/yyyy").format(fechaConcreta)
+        return fechaNueva
+    }
+
+    fun formatoFechaMes(fechaRecibida: String):String{
+        val fechaConcreta: Date = SimpleDateFormat("yyyy-MM").parse(fechaRecibida)
+        val fechaNueva: String = SimpleDateFormat("MMMM, yyyy").format(fechaConcreta)
         return fechaNueva
     }
 
