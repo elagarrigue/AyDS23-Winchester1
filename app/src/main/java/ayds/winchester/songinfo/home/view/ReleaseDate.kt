@@ -3,7 +3,6 @@ package ayds.winchester.songinfo.home.view
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 enum class Precision{
     day,
     month,
@@ -16,9 +15,9 @@ internal class ReleaseDateFactoryImpl : ReleaseDateFactory {
 
     override fun get(precision: String, date: String) =
         when (precision) {
-            "day" -> DayDate(date)
-            "month" -> MonthDate(date)
-            "year" -> YearDate(date)
+            Precision.day.name -> DayDate(date)
+            Precision.month.name -> MonthDate(date)
+            Precision.year.name -> YearDate(date)
             else -> DefaultDate(date)
         }
 }
@@ -42,8 +41,8 @@ class MonthDate(
     date: String
 ) : ReleaseDate(date) {
     override fun getFormat(): String {
-        val fechaConcreta: Date = SimpleDateFormat("yyyy-MM").parse(date)
-        return SimpleDateFormat("MMMM, yyyy").format(fechaConcreta)
+        val specificDate: Date = SimpleDateFormat("yyyy-MM").parse(date)
+        return SimpleDateFormat("MMMM, yyyy").format(specificDate)
     }
 }
 
@@ -61,16 +60,11 @@ class YearDate(
 
         return newDate
     }
-
     private fun leapYear(n: Int) = ((n % 4 == 0 && n % 100 != 0) || n % 400 == 0)
-
 }
 
 class DefaultDate(
     date: String
 ): ReleaseDate(date){
-    override fun getFormat(): String {
-        return date
-    }
-
+    override fun getFormat()= date
 }
