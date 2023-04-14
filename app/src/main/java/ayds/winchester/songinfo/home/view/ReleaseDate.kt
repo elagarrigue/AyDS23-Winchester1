@@ -9,11 +9,10 @@ enum class Precision{
     year
 }
 interface ReleaseDateFactory {
-    fun get(precision: String, date: String): ReleaseDate
+    fun getReleaseDate(precision: String, date: String): ReleaseDate
 }
 internal class ReleaseDateFactoryImpl : ReleaseDateFactory {
-
-    override fun get(precision: String, date: String) =
+    override fun getReleaseDate(precision: String, date: String) =
         when (precision) {
             Precision.day.name -> DayDate(date)
             Precision.month.name -> MonthDate(date)
@@ -28,7 +27,7 @@ sealed class ReleaseDate(
     abstract fun getFormat(): String
 }
 
-class DayDate(
+internal class DayDate(
     date: String
 ) : ReleaseDate(date) {
     override fun getFormat(): String {
@@ -37,7 +36,7 @@ class DayDate(
     }
 }
 
-class MonthDate(
+internal class MonthDate(
     date: String
 ) : ReleaseDate(date) {
     override fun getFormat(): String {
@@ -46,24 +45,22 @@ class MonthDate(
     }
 }
 
-class YearDate(
+internal class YearDate(
     date: String
 ) : ReleaseDate(date) {
     override fun getFormat(): String {
-        val intDate: Int = date.toInt();
-        var newDate: String = date;
-
-        if (leapYear(intDate))
-            newDate += " (leap year)"
+        val intDate: Int = date.toInt()
+        var newDate: String = date
+        newDate += if (leapYear(intDate))
+            " (leap year)"
         else
-            newDate += " (not a leap year) "
-
+            " (not a leap year)"
         return newDate
     }
     private fun leapYear(n: Int) = ((n % 4 == 0 && n % 100 != 0) || n % 400 == 0)
 }
 
-class DefaultDate(
+internal class DefaultDate(
     date: String
 ): ReleaseDate(date){
     override fun getFormat()= date
