@@ -34,17 +34,16 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     fun getArtistInfo(artistName: String?) {
-        val retrofit = createRetrofit("https://en.wikipedia.org/w/") //Preguntar si esta bien que se pase asi la url
+        val retrofit = createRetrofit("https://en.wikipedia.org/w/")
         val wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
         Log.e("TAG", "artistName $artistName")
         Thread {
             var infoSong = DataBase.getInfo(dataBase, artistName)
             if (infoSong != null) { // exists in db
                 infoSong = "[*]$infoSong"
-            } else { // get from service
-                val callResponse: Response<String>
+            } else {
                 try {
-                    callResponse = wikipediaAPI.getArtistInfo(artistName).execute()
+                    val callResponse = wikipediaAPI.getArtistInfo(artistName).execute()
                     println("JSON " + callResponse.body())
 
                     val gson = Gson()
