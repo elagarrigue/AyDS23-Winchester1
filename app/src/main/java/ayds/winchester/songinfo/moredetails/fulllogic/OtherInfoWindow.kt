@@ -23,6 +23,7 @@ import java.util.*
 class OtherInfoWindow : AppCompatActivity() {
     private var textPane2: TextView? = null
     private var dataBase: DataBase? = null
+    private val urlString = "https://en.wikipedia.org/?curid="
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,18 +52,14 @@ class OtherInfoWindow : AppCompatActivity() {
                     val snippet = query["search"].asJsonArray[0].asJsonObject["snippet"]
                     val pageid = query["search"].asJsonArray[0].asJsonObject["pageid"]
 
-                    if (snippet == null) {
-                        infoSong = "No Results"
-                    } else {
-                        infoSong = formatInfoSong(snippet, artistName)
-                        saveInDataBase(infoSong, artistName)
-                    }
-                    val urlString = "https://en.wikipedia.org/?curid=$pageid"
-                    findViewById<View>(R.id.openUrlButton).setOnClickListener {
+                    val infoSong = getInfoSong(snippet,artistName)
+
+                    setListener(pageid)
+                    /*findViewById<View>(R.id.openUrlButton).setOnClickListener {
                         val intent = Intent(Intent.ACTION_VIEW)
                         intent.data = Uri.parse(urlString)
                         startActivity(intent)
-                    }
+                    }*/
                 } catch (e1: IOException) {
                     Log.e("TAG", "Error $e1")
                     e1.printStackTrace()
@@ -117,6 +114,26 @@ class OtherInfoWindow : AppCompatActivity() {
         builder.append(textWithBold)
         builder.append("</font></div></html>")
         return builder.toString()
+    }
+
+    private fun getInfoSong(snippet: JsonElement, artistName: String?):String{
+        var infoSong = "No Results"
+        if (snippet != null) {
+            infoSong = formatInfoSong(snippet, artistName)
+            saveInDataBase(infoSong, artistName)
+        }
+        /*infoSong = snippet?.let { formatInfoSong(snippet, artistName) } ?: "No Results"
+        snippet?.let {saveInDataBase(infoSong, artistName)}*/
+        return infoSong
+    }
+
+    private fun setListener(pageid: JsonElement){
+        val urlStringAux = urlString+pageid
+        findViewById<View>(R.id.openUrlButton).setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(urlStringAux)
+            startActivity(intent)
+        }
     }
 
     companion object {
