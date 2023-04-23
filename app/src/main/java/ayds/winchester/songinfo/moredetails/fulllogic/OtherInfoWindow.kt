@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.winchester.songinfo.R
 import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import retrofit2.Response
@@ -20,10 +21,10 @@ import java.io.IOException
 import java.util.*
 
 class OtherInfoWindow : AppCompatActivity() {
+    //private val ARTIST_NAME_EXTRA = "artistName"
     private var textPane2: TextView? = null
+    private var dataBase: DataBase? = null
 
-    //private JPanel imagePanel;
-    // private JLabel posterImageLabel;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
@@ -31,19 +32,21 @@ class OtherInfoWindow : AppCompatActivity() {
         open(intent.getStringExtra("artistName"))
     }
 
-    fun getARtistInfo(artistName: String?) {
+    fun getArtistInfo(artistName: String?) {
 
         // create
-        val retrofit = Retrofit.Builder()
+        /*Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://en.wikipedia.org/w/")
             .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
+            .build();
+    */
+        val retrofit = createRetrofit("https://en.wikipedia.org/w/") //Preguntar si esta bien que se pase asi la url
         val wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
         Log.e("TAG", "artistName $artistName")
         Thread {
-            var text = DataBase.getInfo(dataBase, artistName)
-            if (text != null) { // exists in db
-                text = "[*]$text"
+            var infoSong = DataBase.getInfo(dataBase, artistName)
+            if (infoSong != null) { // exists in db
+                infoSong = "[*]$infoSong"
             } else { // get from service
                 val callResponse: Response<String>
                 try {
@@ -55,14 +58,14 @@ class OtherInfoWindow : AppCompatActivity() {
                     val snippet = query["search"].asJsonArray[0].asJsonObject["snippet"]
                     val pageid = query["search"].asJsonArray[0].asJsonObject["pageid"]
                     if (snippet == null) {
-                        text = "No Results"
-                    } else {
-                        text = snippet.asString.replace("\\n", "\n")
-                        text = textToHtml(text, artistName)
-
-
-                        // save to DB  <o/
-                        DataBase.saveArtist(dataBase, artistName, text)
+                        infoSong = "No Results"
+                    } else { /*
+                  infoSong = snippet.getAsString().replace("\\n", "\n");
+                  infoSong = textToHtml(infoSong, artistName);
+                  DataBase.saveArtist(dataBase, artistName, infoSong);
+                  */
+                        infoSong = formatInfoSong(snippet, artistName)
+                        saveInDataBase(infoSong, artistName)
                     }
                     val urlString = "https://en.wikipedia.org/?curid=$pageid"
                     findViewById<View>(R.id.openUrlButton).setOnClickListener {
@@ -75,10 +78,9 @@ class OtherInfoWindow : AppCompatActivity() {
                     e1.printStackTrace()
                 }
             }
-            val imageUrl =
-                "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
+            val imageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
             Log.e("TAG", "Get Image from $imageUrl")
-            val finalText = text
+            val finalText = infoSong
             runOnUiThread {
                 Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
                 textPane2!!.text = Html.fromHtml(finalText)
@@ -86,31 +88,45 @@ class OtherInfoWindow : AppCompatActivity() {
         }.start()
     }
 
-    private var dataBase: DataBase? = null
     private fun open(artist: String?) {
         dataBase = DataBase(this)
         DataBase.saveArtist(dataBase, "test", "sarasa")
         Log.e("TAG", "" + DataBase.getInfo(dataBase, "test"))
         Log.e("TAG", "" + DataBase.getInfo(dataBase, "nada"))
-        getARtistInfo(artist)
+        getArtistInfo(artist)
     }
 
-    companion object {
-        const val ARTIST_NAME_EXTRA = "artistName"
-        fun textToHtml(text: String, term: String?): String {
-            val builder = StringBuilder()
-            builder.append("<html><div width=400>")
-            builder.append("<font face=\"arial\">")
-            val textWithBold = text
-                .replace("'", " ")
-                .replace("\n", "<br>")
-                .replace(
-                    "(?i)$term".toRegex(),
-                    "<b>" + term!!.uppercase(Locale.getDefault()) + "</b>"
-                )
-            builder.append(textWithBold)
-            builder.append("</font></div></html>")
-            return builder.toString()
-        }
+    private fun formatInfoSong(snippet: JsonElement, artistName: String?): String {
+        var infoSong = snippet.asString.replace("\\n", "\n")
+        infoSong = textToHtml(infoSong, artistName)
+        return infoSong
     }
+
+    private fun saveInDataBase(infoSong: String?, artistName: String?) {
+        DataBase.saveArtist(dataBase, artistName, infoSong)
+    }
+
+    private fun createRetrofit(baseUrl: String): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build()
+    }
+
+    private fun textToHtml(text: String, term: String?): String {
+        val builder = StringBuilder()
+        builder.append("<html><div width=400>")
+        builder.append("<font face=\"arial\">")
+        val textWithBold = text
+            .replace("'", " ")
+            .replace("\n", "<br>")
+            .replace(
+                "(?i)$term".toRegex(),
+                "<b>" + term!!.uppercase(Locale.getDefault()) + "</b>"
+            )
+        builder.append(textWithBold)
+        builder.append("</font></div></html>")
+        return builder.toString()
+    }
+
 }
