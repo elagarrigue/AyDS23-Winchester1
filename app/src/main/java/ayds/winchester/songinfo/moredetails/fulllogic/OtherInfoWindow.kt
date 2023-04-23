@@ -21,7 +21,6 @@ import java.io.IOException
 import java.util.*
 
 class OtherInfoWindow : AppCompatActivity() {
-    //private val ARTIST_NAME_EXTRA = "artistName"
     private var textPane2: TextView? = null
     private var dataBase: DataBase? = null
 
@@ -33,13 +32,6 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     fun getArtistInfo(artistName: String?) {
-
-        // create
-        /*Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("https://en.wikipedia.org/w/")
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build();
-    */
         val retrofit = createRetrofit("https://en.wikipedia.org/w/") //Preguntar si esta bien que se pase asi la url
         val wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
         Log.e("TAG", "artistName $artistName")
@@ -52,18 +44,16 @@ class OtherInfoWindow : AppCompatActivity() {
                 try {
                     callResponse = wikipediaAPI.getArtistInfo(artistName).execute()
                     println("JSON " + callResponse.body())
+
                     val gson = Gson()
                     val jobj = gson.fromJson(callResponse.body(), JsonObject::class.java)
                     val query = jobj["query"].asJsonObject
                     val snippet = query["search"].asJsonArray[0].asJsonObject["snippet"]
                     val pageid = query["search"].asJsonArray[0].asJsonObject["pageid"]
+
                     if (snippet == null) {
                         infoSong = "No Results"
-                    } else { /*
-                  infoSong = snippet.getAsString().replace("\\n", "\n");
-                  infoSong = textToHtml(infoSong, artistName);
-                  DataBase.saveArtist(dataBase, artistName, infoSong);
-                  */
+                    } else {
                         infoSong = formatInfoSong(snippet, artistName)
                         saveInDataBase(infoSong, artistName)
                     }
@@ -127,6 +117,10 @@ class OtherInfoWindow : AppCompatActivity() {
         builder.append(textWithBold)
         builder.append("</font></div></html>")
         return builder.toString()
+    }
+
+    companion object {
+        const val ARTIST_NAME_EXTRA = "artistName"
     }
 
 }
