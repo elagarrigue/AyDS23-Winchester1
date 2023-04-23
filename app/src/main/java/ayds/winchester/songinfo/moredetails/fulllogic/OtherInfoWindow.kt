@@ -24,6 +24,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private var textPane2: TextView? = null
     private var dataBase: DataBase? = null
     private val urlString = "https://en.wikipedia.org/?curid="
+    private val imageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,26 +53,16 @@ class OtherInfoWindow : AppCompatActivity() {
                     val snippet = query["search"].asJsonArray[0].asJsonObject["snippet"]
                     val pageid = query["search"].asJsonArray[0].asJsonObject["pageid"]
 
-                    val infoSong = getInfoSong(snippet,artistName)
-
+                    infoSong = getInfoSong(snippet, artistName)
                     setListener(pageid)
-                    /*findViewById<View>(R.id.openUrlButton).setOnClickListener {
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        intent.data = Uri.parse(urlString)
-                        startActivity(intent)
-                    }*/
+
                 } catch (e1: IOException) {
                     Log.e("TAG", "Error $e1")
                     e1.printStackTrace()
                 }
             }
-            val imageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
-            Log.e("TAG", "Get Image from $imageUrl")
-            val finalText = infoSong
-            runOnUiThread {
-                Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
-                textPane2!!.text = Html.fromHtml(finalText)
-            }
+            loadImage(imageUrl)
+            setText(infoSong)
         }.start()
     }
 
@@ -116,23 +107,36 @@ class OtherInfoWindow : AppCompatActivity() {
         return builder.toString()
     }
 
-    private fun getInfoSong(snippet: JsonElement, artistName: String?):String{
-        var infoSong = "No Results"
-        if (snippet != null) {
+    private fun getInfoSong(snippet: JsonElement, artistName: String?): String {
+        var infoSong: String
+        if (snippet == null) {
+            infoSong = "No Results"
+        } else {
             infoSong = formatInfoSong(snippet, artistName)
             saveInDataBase(infoSong, artistName)
         }
-        /*infoSong = snippet?.let { formatInfoSong(snippet, artistName) } ?: "No Results"
-        snippet?.let {saveInDataBase(infoSong, artistName)}*/
         return infoSong
     }
 
     private fun setListener(pageid: JsonElement){
-        val urlStringAux = urlString+pageid
+        val urlStringAux = "$urlString$pageid"
         findViewById<View>(R.id.openUrlButton).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(urlStringAux)
             startActivity(intent)
+        }
+    }
+
+    private fun loadImage(imageUrl: String) {
+        Log.e("TAG", "Get Image from $imageUrl")
+        runOnUiThread {
+            Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
+        }
+    }
+
+    private fun setText(finalText: String) {
+        runOnUiThread {
+            textPane2!!.text = Html.fromHtml(finalText)
         }
     }
 
