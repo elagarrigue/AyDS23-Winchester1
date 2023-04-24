@@ -47,13 +47,13 @@ class OtherInfoWindow : AppCompatActivity() {
                     println("JSON " + callResponse.body())
 
                     val gson = Gson()
-                    val jobj = gson.fromJson(callResponse.body(), JsonObject::class.java)
-                    val query = jobj["query"].asJsonObject
-                    val snippet = query["search"].asJsonArray[0].asJsonObject["snippet"]
-                    val pageid = query["search"].asJsonArray[0].asJsonObject["pageid"]
+                    val jobj = getJobj(gson,callResponse)
+                    val query = getQuery(jobj)
+                    val snippet = getSnippet(query)
+                    val pageid = getPageId(query)
 
-                    infoSong = getInfoSong(snippet, artistName)
-                    setListener(pageid)
+                    infoSong = snippet?.let { getInfoSong(it, artistName) }
+                    pageid?.let { setListener(it) }
 
                 } catch (e1: IOException) {
                     Log.e("TAG", "Error $e1")
@@ -137,6 +137,22 @@ class OtherInfoWindow : AppCompatActivity() {
         runOnUiThread {
             textPane2!!.text = Html.fromHtml(finalText)
         }
+    }
+
+    private fun getJobj(gson: Gson, callResponse: Response<String>): JsonObject? {
+        return gson.fromJson(callResponse.body(), JsonObject::class.java)
+    }
+
+    private fun getQuery(jobj: JsonObject?): JsonObject? {
+        return jobj?.get("query")?.asJsonObject
+    }
+
+    private fun getSnippet(query: JsonObject?): JsonElement? {
+        return query?.get("search")?.asJsonArray?.get(0)?.asJsonObject?.get("snippet")
+    }
+
+    private fun getPageId(query: JsonObject?): JsonElement? {
+        return query?.get("search")?.asJsonArray?.get(0)?.asJsonObject?.get("pageid")
     }
 
     companion object {
