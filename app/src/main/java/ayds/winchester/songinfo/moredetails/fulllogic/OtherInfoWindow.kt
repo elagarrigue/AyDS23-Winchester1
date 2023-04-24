@@ -25,6 +25,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private var dataBase: DataBase? = null
     private val urlString = "https://en.wikipedia.org/?curid="
     private val imageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
+    private val baseUrl = "https://en.wikipedia.org/w/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,35 +35,40 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     fun getArtistInfo(artistName: String?) {
-        val retrofit = createRetrofit("https://en.wikipedia.org/w/")
+        val retrofit = createRetrofit()
         val wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
         Log.e("TAG", "artistName $artistName")
         Thread {
             var infoSong = DataBase.getInfo(dataBase, artistName)
-            if (infoSong != null) { // exists in db
-                infoSong = "[*]$infoSong"
-            } else {
-                try {
-                    val callResponse = wikipediaAPI.getArtistInfo(artistName).execute()
-                    println("JSON " + callResponse.body())
+            infoSong = infoSong?.let { "[*]$it" } ?: infoSongIsNull(infoSong,wikipediaAPI, artistName)
 
-                    val gson = Gson()
-                    val jobj = getJobj(gson,callResponse)
-                    val query = getQuery(jobj)
-                    val snippet = getSnippet(query)
-                    val pageid = getPageId(query)
-
-                    infoSong = snippet?.let { getInfoSong(it, artistName) }
-                    pageid?.let { setListener(it) }
-
-                } catch (e1: IOException) {
-                    Log.e("TAG", "Error $e1")
-                    e1.printStackTrace()
-                }
-            }
             loadImage(imageUrl)
+
             setText(infoSong)
         }.start()
+    }
+
+    private fun infoSongIsNull(infoSong: String?, wikipediaAPI: WikipediaAPI, artistName: String?): String? {
+        var infoSongAux = infoSong
+        try {
+            val callResponse = wikipediaAPI.getArtistInfo(artistName).execute()
+            println("JSON " + callResponse.body())//Hay que imprimirlo?
+
+            val gson = Gson()
+            val jobj = getJobj(gson,callResponse)
+            val query = getQuery(jobj)
+            val snippet = getSnippet(query)
+            val pageid = getPageId(query)
+
+            infoSongAux = snippet?.let { getInfoSong(it, artistName) }
+            pageid?.let { setListener(it) }
+
+        } catch (e1: IOException) {
+            Log.e("TAG", "Error $e1")
+            e1.printStackTrace()
+        }
+
+        return infoSongAux
     }
 
     private fun open(artist: String?) {
@@ -83,7 +89,7 @@ class OtherInfoWindow : AppCompatActivity() {
         DataBase.saveArtist(dataBase, artistName, infoSong)
     }
 
-    private fun createRetrofit(baseUrl: String): Retrofit {
+    private fun createRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(ScalarsConverterFactory.create())
