@@ -34,16 +34,12 @@ class OtherInfoWindow : AppCompatActivity() {
         open(intent.getStringExtra("artistName"))
     }
 
-    fun getArtistInfo(artistName: String?) {
-        val retrofit = createRetrofit()
-        val wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
+    fun getArtistInfo(artistName: String?, wikipediaAPI: WikipediaAPI) {
         Log.e("TAG", "artistName $artistName")
         Thread {
             var infoSong = DataBase.getInfo(dataBase, artistName)
             infoSong = infoSong?.let { "[*]$it" } ?: infoSongIsNull(infoSong,wikipediaAPI, artistName)
-
             loadImage(imageUrl)
-
             setText(infoSong)
         }.start()
     }
@@ -60,14 +56,17 @@ class OtherInfoWindow : AppCompatActivity() {
             val snippet = getSnippet(query)
             val pageid = getPageId(query)
 
-            infoSongAux = snippet?.let { getInfoSong(it, artistName) }
+            infoSongAux = snippet?.let {
+                val infoSong = formatInfoSong(snippet,artistName)
+                saveInDataBase(infoSong, artistName)
+                infoSong
+            } ?: "No Results"
             pageid?.let { setListener(it) }
 
         } catch (e1: IOException) {
             Log.e("TAG", "Error $e1")
             e1.printStackTrace()
         }
-
         return infoSongAux
     }
 
@@ -76,7 +75,9 @@ class OtherInfoWindow : AppCompatActivity() {
         DataBase.saveArtist(dataBase, "test", "sarasa")
         Log.e("TAG", "" + DataBase.getInfo(dataBase, "test"))
         Log.e("TAG", "" + DataBase.getInfo(dataBase, "nada"))
-        getArtistInfo(artist)
+        val retrofit = createRetrofit()
+        val wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
+        getArtistInfo(artist, wikipediaAPI)
     }
 
     private fun formatInfoSong(snippet: JsonElement, artistName: String?): String {
@@ -110,17 +111,6 @@ class OtherInfoWindow : AppCompatActivity() {
         builder.append(textWithBold)
         builder.append("</font></div></html>")
         return builder.toString()
-    }
-
-    private fun getInfoSong(snippet: JsonElement, artistName: String?): String {
-        var infoSong: String
-        if (snippet == null) {
-            infoSong = "No Results"
-        } else {
-            infoSong = formatInfoSong(snippet, artistName)
-            saveInDataBase(infoSong, artistName)
-        }
-        return infoSong
     }
 
     private fun setListener(pageid: JsonElement){
