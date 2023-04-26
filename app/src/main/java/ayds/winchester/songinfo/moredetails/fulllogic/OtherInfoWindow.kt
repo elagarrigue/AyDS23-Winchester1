@@ -75,15 +75,21 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun handleNullInfoSong(artistName: String?): String {
         var infoSong = ""
         try {
-            val callResponse = getArtistInfoFromService(artistName)
-            val query = getQuery(callResponse)
-            val snippet = getSnippet(query)
-            val pageId = getPageId(query)
-            infoSong = resolveInfoSong(snippet, artistName)
-            pageId?.let { setListener(it) }
+            infoSong = handleNullInfoSongAux(artistName)
         } catch (e1: IOException) {
             e1.printStackTrace()
         }
+        return infoSong
+    }
+
+    private fun handleNullInfoSongAux(artistName: String?): String {
+        val callResponse = getArtistInfoFromService(artistName)
+        val query = getQuery(callResponse)
+        val snippet = getSnippet(query)
+        val pageId = getPageId(query)
+        val infoSong = resolveInfoSong(snippet, artistName)
+        val urlString = "$WIKIPEDIA_ARTICLE_URL$pageId"
+        setListener(urlString)
         return infoSong
     }
 
@@ -119,18 +125,17 @@ class OtherInfoWindow : AppCompatActivity() {
             .replace("\n", "<br>")
             .replace(
                 "(?i)$term".toRegex(),
-                "<b>" + term!!.uppercase(Locale.getDefault()) + "</b>"
+                "<b>" + term?.uppercase(Locale.getDefault()) + "</b>"
             )
         builder.append(textWithBold)
         builder.append("</font></div></html>")
         return builder.toString()
     }
 
-    private fun setListener(pageId: JsonElement){
-        val urlStringAux = "$WIKIPEDIA_ARTICLE_URL$pageId"
+    private fun setListener(urlString: String){
         findViewById<View>(R.id.openUrlButton).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(urlStringAux)
+            intent.data = Uri.parse(urlString)
             startActivity(intent)
         }
     }
