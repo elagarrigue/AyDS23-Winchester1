@@ -2,11 +2,20 @@ package ayds.winchester.songinfo.moredetails.fulllogic
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import java.sql.*
 
+private const val TIMEOUT = 30;
+private const val URL_CONNECTION = "jdbc:sqlite:./dictionary.db"
+private const val ID_COLUMN = "id"
+private const val ARTIST_COLUMN = "artist"
+private const val INFO_COLUMN = "info"
+private const val SOURCE_COLUMN = "source"
+private const val TABLE_ARTIST_NAME = "artists"
+private const val artistQuery = "select * from artists"
 class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", null, 1) {
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -17,16 +26,6 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
-
-    companion object {
-        val TIMEOUT = 30;
-        val URL_CONNECTION = "jdbc:sqlite:./dictionary.db"
-        val ID_COLUMN = "id"
-        val ARTIST_COLUMN = "artist"
-        val INFO_COLUMN = "info"
-        val SOURCE_COLUMN = "source"
-        var artistQuery = "select * from artists"
-
         fun testDB() {
             try {
                 var connection = createConnection(URL_CONNECTION)
@@ -66,9 +65,9 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
             connection.close()
         }
 
-        @JvmStatic
+
         fun saveArtist(dbHelper: DataBase, artist: String?, info: String?) {
-            dbHelper.writableDatabase.insert(ARTIST_COLUMN, null, getValues(artist, info))
+            dbHelper.writableDatabase.insert(TABLE_ARTIST_NAME, null, getValues(artist, info))
         }
 
         private fun getValues(artist: String?, info: String?) : ContentValues{
@@ -80,33 +79,20 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
             return values;
         }
 
-        @JvmStatic
-        fun getInfo(dbHelper: DataBase, artist: String): String? {
-            val db = dbHelper.readableDatabase
+        fun getInfo(dbHelper: DataBase, artist: String): String? = getArtistInfo(makeQuery(artist))
 
-// Define a projection that specifies which columns from the database
-// you will actually use after this query.
-            val projection = arrayOf(
-                "id",
-                "artist",
-                "info"
+        private fun makeQuery(artist: String) : Cursor =
+            this.readableDatabase.query(
+                TABLE_ARTIST_NAME,
+                arrayOf(ID_COLUMN, ARTIST_COLUMN, INFO_COLUMN),
+                "$ARTIST_COLUMN = ?",
+                arrayOf(artist),
+                null,
+                null,
+                "$ARTIST_COLUMN  DESC"
             )
 
-// Filter results WHERE "title" = 'My Title'
-            val selection = "artist  = ?"
-            val selectionArgs = arrayOf(artist)
-
-// How you want the results sorted in the resulting Cursor
-            val sortOrder = "artist DESC"
-            val cursor = db.query(
-                "artists",  // The table to query
-                projection,  // The array of columns to return (pass null to get all)
-                selection,  // The columns for the WHERE clause
-                selectionArgs,  // The values for the WHERE clause
-                null,  // don't group the rows
-                null,  // don't filter by row groups
-                sortOrder // The sort order
-            )
+        private fun getArtistInfo(cursor: Cursor) : String? {
             val items: MutableList<String> = ArrayList()
             while (cursor.moveToNext()) {
                 val info = cursor.getString(
@@ -117,10 +103,4 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
             cursor.close()
             return if (items.isEmpty()) null else items[0]
         }
-
-        fun getTitle(){}
-
-        fun sortResults(){}
-    }
-
     }
