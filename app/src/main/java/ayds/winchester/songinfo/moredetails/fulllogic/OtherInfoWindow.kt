@@ -21,11 +21,12 @@ import java.io.IOException
 import java.util.*
 
 class OtherInfoWindow : AppCompatActivity() {
-    private var textPane2: TextView? = null
-    private var dataBase: DataBase? = null
+    private lateinit var textPane2: TextView
+    private lateinit var dataBase: DataBase
     private val urlString = "https://en.wikipedia.org/?curid="
     private val imageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
     private val baseUrl = "https://en.wikipedia.org/w/"
+    private val noResults = "NO Results"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,17 @@ class OtherInfoWindow : AppCompatActivity() {
         open(intent.getStringExtra("artistName"))
     }
 
-    fun getArtistInfo(artistName: String?, wikipediaAPI: WikipediaAPI) {
+    private fun open(artist: String?) {
+        dataBase = DataBase(this)
+        DataBase.saveArtist(dataBase, "test", "sarasa")
+        Log.e("TAG", "" + DataBase.getInfo(dataBase, "test"))
+        Log.e("TAG", "" + DataBase.getInfo(dataBase, "nada"))
+        val retrofit = createRetrofit()
+        val wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
+        getArtistInfo(artist, wikipediaAPI)
+    }
+
+    private fun getArtistInfo(artistName: String?, wikipediaAPI: WikipediaAPI) {
         Log.e("TAG", "artistName $artistName")
         Thread {
             var infoSong = DataBase.getInfo(dataBase, artistName)
@@ -60,7 +71,7 @@ class OtherInfoWindow : AppCompatActivity() {
                 val infoSong = formatInfoSong(snippet,artistName)
                 saveInDataBase(infoSong, artistName)
                 infoSong
-            } ?: "No Results"
+            } ?: noResults
             pageid?.let { setListener(it) }
 
         } catch (e1: IOException) {
@@ -73,17 +84,6 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoFromService(wikipediaAPI: WikipediaAPI, artistName: String?): Response<String>{
         return wikipediaAPI.getArtistInfo(artistName).execute()
     }
-
-    private fun open(artist: String?) {
-        dataBase = DataBase(this)
-        DataBase.saveArtist(dataBase, "test", "sarasa")
-        Log.e("TAG", "" + DataBase.getInfo(dataBase, "test"))
-        Log.e("TAG", "" + DataBase.getInfo(dataBase, "nada"))
-        val retrofit = createRetrofit()
-        val wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
-        getArtistInfo(artist, wikipediaAPI)
-    }
-
     private fun formatInfoSong(snippet: JsonElement, artistName: String?): String {
         var infoSong = snippet.asString.replace("\\n", "\n")
         infoSong = textToHtml(infoSong, artistName)
