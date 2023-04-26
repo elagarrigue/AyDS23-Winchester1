@@ -4,13 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.winchester.songinfo.R
-import ayds.winchester.songinfo.home.model.repository.external.spotify.tracks.SpotifyTrackAPI
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -71,10 +69,10 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun getArtistInfoFromDataBase(artistName: String?): String? {
-        return artistName?.let { dataBase.getInfo(artistName) } ?: null
+        return artistName?.let { dataBase.getInfo(artistName) }
     }
 
-    private fun handleNullInfoSong(artistName: String?): String? {
+    private fun handleNullInfoSong(artistName: String?): String {
         var infoSong = ""
         try {
             val callResponse = getArtistInfoFromService(artistName)
@@ -94,7 +92,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun resolveInfoSong(snippet: JsonElement?, artistName: String?): String{
-        var infoSong = snippet?.let {
+        val infoSong = snippet?.let {
             val infoSong = formatInfoSong(snippet,artistName)
             saveInDataBase(infoSong, artistName)
             infoSong
