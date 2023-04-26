@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import java.sql.*
 
-private const val TIMEOUT = 30;
+private const val TIMEOUT = 30
 private const val URL_CONNECTION = "jdbc:sqlite:./dictionary.db"
 private const val ID_COLUMN = "id"
 private const val ARTIST_COLUMN = "artist"
@@ -28,7 +28,7 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
         fun testDB() {
             try {
-                var connection = createConnection(URL_CONNECTION)
+                val connection = createConnection(URL_CONNECTION)
                 val statement = prepareStatement(connection)
                 val rs = executeQuery(statement, artistQuery)
                 printResults(rs)
@@ -38,21 +38,21 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
             }
         }
 
-        fun createConnection(url: String): Connection{
-            return DriverManager.getConnection(url);
+        private fun createConnection(url: String): Connection{
+            return DriverManager.getConnection(url)
         }
 
-        fun prepareStatement(connection: Connection) : Statement {
-            var statement = connection.createStatement()
+        private fun prepareStatement(connection: Connection) : Statement {
+            val statement = connection.createStatement()
             statement.queryTimeout = TIMEOUT
             return statement
         }
 
-        fun executeQuery(statement: Statement, query: String): ResultSet {
+        private fun executeQuery(statement: Statement, query: String): ResultSet {
             return statement.executeQuery(query)
         }
 
-        fun printResults(rs: ResultSet){
+        private fun printResults(rs: ResultSet){
             while (rs.next()) {
                 println("id = " + rs.getInt(ID_COLUMN))
                 println("artist = " + rs.getString(ARTIST_COLUMN))
@@ -61,7 +61,7 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
             }
         }
 
-        fun closeConnection(connection: Connection){
+        private fun closeConnection(connection: Connection){
             connection.close()
         }
 
@@ -76,7 +76,7 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
             values.put(INFO_COLUMN, info)
             values.put(SOURCE_COLUMN, 1)
 
-            return values;
+            return values
         }
 
         fun getInfo(dbHelper: DataBase, artist: String): String? = getArtistInfo(makeQuery(artist))
