@@ -63,14 +63,14 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getArtistInfo(artistName: String?) {
         Thread {
-            var infoSong = getInfoFromService(artistName)
+            var infoSong = getArtistInfoFromDataBase(artistName)
             infoSong = infoSong?.let { "[*]$it" } ?: handleNullInfoSong(artistName)
             loadImage(WIKIPEDIA_LOGO)
             setText(infoSong)
         }.start()
     }
 
-    private fun getInfoFromService(artistName: String?): String? {
+    private fun getArtistInfoFromDataBase(artistName: String?): String? {
         return artistName?.let { dataBase.getInfo(artistName) } ?: null
     }
 
