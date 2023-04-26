@@ -29,6 +29,7 @@ private const val NO_RESULT = "NO Results"
 class OtherInfoWindow : AppCompatActivity() {
     private lateinit var textPane2: TextView
     private lateinit var dataBase: DataBase
+    private lateinit var wikipediaAPI: WikipediaAPI
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,15 +41,26 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun open(artist: String?) {
         dataBase = DataBase(this)
         DataBase.saveArtist(dataBase, "test", "sarasa")
-        val retrofit = createRetrofit()
-        val wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
-        getArtistInfo(artist, wikipediaAPI)
+        createWikipediaAPI()
+        getArtistInfo(artist)
     }
 
-    private fun getArtistInfo(artistName: String?, wikipediaAPI: WikipediaAPI) {
+    private fun createWikipediaAPI(){
+        val retrofit = createRetrofit()
+        wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
+    }
+
+    private fun createRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build()
+    }
+
+    private fun getArtistInfo(artistName: String?) {
         Thread {
             var infoSong = getInfoFromService(artistName)
-            infoSong = infoSong?.let { "[*]$it" } ?: infoSongIsNull(infoSong,wikipediaAPI, artistName)
+            infoSong = infoSong?.let { "[*]$it" } ?: infoSongIsNull(artistName)
             loadImage(IMAGE_URL)
             setText(infoSong)
         }.start()
@@ -58,17 +70,17 @@ class OtherInfoWindow : AppCompatActivity() {
         return DataBase.getInfo(dataBase, artistName)
     }
 
-    private fun infoSongIsNull(infoSong: String?, wikipediaAPI: WikipediaAPI, artistName: String?): String? {
-        var infoSongAux = infoSong
+    private fun infoSongIsNull(artistName: String?): String? {
+        var infoSong = ""
         try {
-            val callResponse = getArtistInfoFromService(wikipediaAPI, artistName)
+            val callResponse = getArtistInfoFromService(artistName)
             val gson = Gson()
             val jobj = getJobj(gson,callResponse)
             val query = getQuery(jobj)
             val snippet = getSnippet(query)
             val pageId = getPageId(query)
 
-            infoSongAux = snippet?.let {
+            infoSong = snippet?.let {
                 val infoSong = formatInfoSong(snippet,artistName)
                 saveInDataBase(infoSong, artistName)
                 infoSong
@@ -78,10 +90,10 @@ class OtherInfoWindow : AppCompatActivity() {
         } catch (e1: IOException) {
             e1.printStackTrace()
         }
-        return infoSongAux
+        return infoSong
     }
 
-    private fun getArtistInfoFromService(wikipediaAPI: WikipediaAPI, artistName: String?): Response<String>{
+    private fun getArtistInfoFromService(artistName: String?): Response<String>{
         return wikipediaAPI.getArtistInfo(artistName).execute()
     }
 
@@ -93,13 +105,6 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun saveInDataBase(infoSong: String?, artistName: String?) {
         DataBase.saveArtist(dataBase, artistName, infoSong)
-    }
-
-    private fun createRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
     }
 
     private fun textToHtml(text: String, term: String?): String {
