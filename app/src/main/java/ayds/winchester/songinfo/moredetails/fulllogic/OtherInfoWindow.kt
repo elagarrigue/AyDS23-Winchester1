@@ -64,7 +64,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfo(artistName: String?) {
         Thread {
             var infoSong = getInfoFromService(artistName)
-            infoSong = infoSong?.let { "[*]$it" } ?: infoSongIsNull(artistName)
+            infoSong = infoSong?.let { "[*]$it" } ?: handleNullInfoSong(artistName)
             loadImage(WIKIPEDIA_LOGO)
             setText(infoSong)
         }.start()
@@ -74,7 +74,7 @@ class OtherInfoWindow : AppCompatActivity() {
         return artistName?.let { dataBase.getInfo(artistName) } ?: null
     }
 
-    private fun infoSongIsNull(artistName: String?): String? {
+    private fun handleNullInfoSong(artistName: String?): String? {
         var infoSong = ""
         try {
             val callResponse = getArtistInfoFromService(artistName)
