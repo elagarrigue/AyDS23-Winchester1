@@ -47,7 +47,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun infoSongIsNull(infoSong: String?, wikipediaAPI: WikipediaAPI, artistName: String?): String? {
         var infoSongAux = infoSong
         try {
-            val callResponse = wikipediaAPI.getArtistInfo(artistName).execute()
+            val callResponse = getArtistInfoFromService(wikipediaAPI, artistName)
             println("JSON " + callResponse.body())//Hay que imprimirlo?
 
             val gson = Gson()
@@ -68,6 +68,10 @@ class OtherInfoWindow : AppCompatActivity() {
             e1.printStackTrace()
         }
         return infoSongAux
+    }
+
+    private fun getArtistInfoFromService(wikipediaAPI: WikipediaAPI, artistName: String?): Response<String>{
+        return wikipediaAPI.getArtistInfo(artistName).execute()
     }
 
     private fun open(artist: String?) {
