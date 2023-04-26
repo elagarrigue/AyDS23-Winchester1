@@ -68,17 +68,16 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
 
         @JvmStatic
         fun saveArtist(dbHelper: DataBase, artist: String?, info: String?) {
-            // Gets the data repository in write mode
-            val db = dbHelper.writableDatabase
+            dbHelper.writableDatabase.insert(ARTIST_COLUMN, null, getValues(artist, info))
+        }
 
-// Create a new map of values, where column names are the keys
+        private fun getValues(artist: String?, info: String?) : ContentValues{
             val values = ContentValues()
-            values.put("artist", artist)
-            values.put("info", info)
-            values.put("source", 1)
+            values.put(ARTIST_COLUMN, artist)
+            values.put(INFO_COLUMN, info)
+            values.put(SOURCE_COLUMN, 1)
 
-// Insert the new row, returning the primary key value of the new row
-            val newRowId = db.insert("artists", null, values)
+            return values;
         }
 
         @JvmStatic
@@ -118,6 +117,10 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", n
             cursor.close()
             return if (items.isEmpty()) null else items[0]
         }
+
+        fun getTitle(){}
+
+        fun sortResults(){}
     }
 
     }
