@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.winchester.songinfo.R
+import ayds.winchester.songinfo.home.model.repository.external.spotify.tracks.SpotifyTrackAPI
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -20,13 +21,14 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.IOException
 import java.util.*
 
+private const val URL_STRING = "https://en.wikipedia.org/?curid="
+private const val IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
+private const val BASE_URL = "https://en.wikipedia.org/w/"
+private const val NO_RESULT = "NO Results"
+
 class OtherInfoWindow : AppCompatActivity() {
     private lateinit var textPane2: TextView
     private lateinit var dataBase: DataBase
-    private val urlString = "https://en.wikipedia.org/?curid="
-    private val imageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
-    private val baseUrl = "https://en.wikipedia.org/w/"
-    private val noResults = "NO Results"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,44 +40,42 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun open(artist: String?) {
         dataBase = DataBase(this)
         DataBase.saveArtist(dataBase, "test", "sarasa")
-        Log.e("TAG", "" + DataBase.getInfo(dataBase, "test"))
-        Log.e("TAG", "" + DataBase.getInfo(dataBase, "nada"))
         val retrofit = createRetrofit()
         val wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
         getArtistInfo(artist, wikipediaAPI)
     }
 
     private fun getArtistInfo(artistName: String?, wikipediaAPI: WikipediaAPI) {
-        Log.e("TAG", "artistName $artistName")
         Thread {
-            var infoSong = DataBase.getInfo(dataBase, artistName)
+            var infoSong = getInfoFromService(artistName)
             infoSong = infoSong?.let { "[*]$it" } ?: infoSongIsNull(infoSong,wikipediaAPI, artistName)
-            loadImage(imageUrl)
+            loadImage(IMAGE_URL)
             setText(infoSong)
         }.start()
+    }
+
+    private fun getInfoFromService(artistName: String?): String? {
+        return DataBase.getInfo(dataBase, artistName)
     }
 
     private fun infoSongIsNull(infoSong: String?, wikipediaAPI: WikipediaAPI, artistName: String?): String? {
         var infoSongAux = infoSong
         try {
             val callResponse = getArtistInfoFromService(wikipediaAPI, artistName)
-            println("JSON " + callResponse.body())//Hay que imprimirlo?
-
             val gson = Gson()
             val jobj = getJobj(gson,callResponse)
             val query = getQuery(jobj)
             val snippet = getSnippet(query)
-            val pageid = getPageId(query)
+            val pageId = getPageId(query)
 
             infoSongAux = snippet?.let {
                 val infoSong = formatInfoSong(snippet,artistName)
                 saveInDataBase(infoSong, artistName)
                 infoSong
-            } ?: noResults
-            pageid?.let { setListener(it) }
+            } ?: NO_RESULT
+            pageId?.let { setListener(it) }
 
         } catch (e1: IOException) {
-            Log.e("TAG", "Error $e1")
             e1.printStackTrace()
         }
         return infoSongAux
@@ -84,6 +84,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoFromService(wikipediaAPI: WikipediaAPI, artistName: String?): Response<String>{
         return wikipediaAPI.getArtistInfo(artistName).execute()
     }
+
     private fun formatInfoSong(snippet: JsonElement, artistName: String?): String {
         var infoSong = snippet.asString.replace("\\n", "\n")
         infoSong = textToHtml(infoSong, artistName)
@@ -96,7 +97,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun createRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .build()
     }
@@ -117,8 +118,8 @@ class OtherInfoWindow : AppCompatActivity() {
         return builder.toString()
     }
 
-    private fun setListener(pageid: JsonElement){
-        val urlStringAux = "$urlString$pageid"
+    private fun setListener(pageId: JsonElement){
+        val urlStringAux = "$URL_STRING$pageId"
         findViewById<View>(R.id.openUrlButton).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(urlStringAux)
@@ -127,13 +128,12 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun loadImage(imageUrl: String) {
-        Log.e("TAG", "Get Image from $imageUrl")
         runOnUiThread {
             Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
         }
     }
 
-    private fun setText(finalText: String) {
+    private fun setText(finalText: String?) {
         runOnUiThread {
             textPane2!!.text = Html.fromHtml(finalText)
         }
