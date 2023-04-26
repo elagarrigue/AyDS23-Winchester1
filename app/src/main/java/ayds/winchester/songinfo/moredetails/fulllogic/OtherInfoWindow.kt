@@ -44,7 +44,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun open(artist: String?) {
         dataBase = DataBase(this)
-        DataBase.saveArtist(dataBase, "test", "sarasa")
+        dataBase.saveArtist("test", "sarasa")
         createWikipediaAPI()
         getArtistInfo(artist)
     }
@@ -71,7 +71,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun getInfoFromService(artistName: String?): String? {
-        return DataBase.getInfo(dataBase, artistName)
+        return artistName?.let { dataBase.getInfo(artistName) } ?: null
     }
 
     private fun infoSongIsNull(artistName: String?): String? {
@@ -109,7 +109,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun saveInDataBase(infoSong: String?, artistName: String?) {
-        DataBase.saveArtist(dataBase, artistName, infoSong)
+        dataBase.saveArtist(artistName, infoSong)
     }
 
     private fun textToHtml(text: String, term: String?): String {
