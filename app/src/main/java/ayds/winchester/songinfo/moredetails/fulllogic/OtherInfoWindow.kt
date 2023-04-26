@@ -21,10 +21,14 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.IOException
 import java.util.*
 
-private const val URL_STRING = "https://en.wikipedia.org/?curid="
-private const val IMAGE_URL = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
-private const val BASE_URL = "https://en.wikipedia.org/w/"
-private const val NO_RESULT = "NO Results"
+private const val WIKIPEDIA_ARTICLE_URL = "https://en.wikipedia.org/?curid="
+private const val WIKIPEDIA_LOGO = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
+private const val WIKIPEDIA_BASE_URL = "https://en.wikipedia.org/w/"
+private const val NO_RESULT = "No Results"
+private const val QUERY = "query"
+private const val SNIPPET = "snippet"
+private const val PAGE_ID = "pageid"
+private const val SEARCH = "search"
 
 class OtherInfoWindow : AppCompatActivity() {
     private lateinit var textPane2: TextView
@@ -52,7 +56,7 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun createRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(WIKIPEDIA_BASE_URL)
             .addConverterFactory(ScalarsConverterFactory.create())
             .build()
     }
@@ -61,7 +65,7 @@ class OtherInfoWindow : AppCompatActivity() {
         Thread {
             var infoSong = getInfoFromService(artistName)
             infoSong = infoSong?.let { "[*]$it" } ?: infoSongIsNull(artistName)
-            loadImage(IMAGE_URL)
+            loadImage(WIKIPEDIA_LOGO)
             setText(infoSong)
         }.start()
     }
@@ -74,19 +78,11 @@ class OtherInfoWindow : AppCompatActivity() {
         var infoSong = ""
         try {
             val callResponse = getArtistInfoFromService(artistName)
-            val gson = Gson()
-            val jobj = getJobj(gson,callResponse)
-            val query = getQuery(jobj)
+            val query = getQuery(callResponse)
             val snippet = getSnippet(query)
             val pageId = getPageId(query)
-
-            infoSong = snippet?.let {
-                val infoSong = formatInfoSong(snippet,artistName)
-                saveInDataBase(infoSong, artistName)
-                infoSong
-            } ?: NO_RESULT
+            infoSong = resolveInfoSong(snippet, artistName)
             pageId?.let { setListener(it) }
-
         } catch (e1: IOException) {
             e1.printStackTrace()
         }
@@ -95,6 +91,15 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getArtistInfoFromService(artistName: String?): Response<String>{
         return wikipediaAPI.getArtistInfo(artistName).execute()
+    }
+
+    private fun resolveInfoSong(snippet: JsonElement?, artistName: String?): String{
+        var infoSong = snippet?.let {
+            val infoSong = formatInfoSong(snippet,artistName)
+            saveInDataBase(infoSong, artistName)
+            infoSong
+        } ?: NO_RESULT
+        return infoSong
     }
 
     private fun formatInfoSong(snippet: JsonElement, artistName: String?): String {
@@ -124,7 +129,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun setListener(pageId: JsonElement){
-        val urlStringAux = "$URL_STRING$pageId"
+        val urlStringAux = "$WIKIPEDIA_ARTICLE_URL$pageId"
         findViewById<View>(R.id.openUrlButton).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(urlStringAux)
@@ -148,20 +153,21 @@ class OtherInfoWindow : AppCompatActivity() {
         return gson.fromJson(callResponse.body(), JsonObject::class.java)
     }
 
-    private fun getQuery(jobj: JsonObject?): JsonObject? {
-        return jobj?.get("query")?.asJsonObject
+    private fun getQuery(callResponse: Response<String>): JsonObject? {
+        val gson = Gson()
+        val jobj = getJobj(gson,callResponse)
+        return jobj?.get(QUERY)?.asJsonObject
     }
 
     private fun getSnippet(query: JsonObject?): JsonElement? {
-        return query?.get("search")?.asJsonArray?.get(0)?.asJsonObject?.get("snippet")
+        return query?.get(SEARCH)?.asJsonArray?.get(0)?.asJsonObject?.get(SNIPPET)
     }
 
     private fun getPageId(query: JsonObject?): JsonElement? {
-        return query?.get("search")?.asJsonArray?.get(0)?.asJsonObject?.get("pageid")
+        return query?.get(SEARCH)?.asJsonArray?.get(0)?.asJsonObject?.get(PAGE_ID)
     }
 
     companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
     }
-
 }
