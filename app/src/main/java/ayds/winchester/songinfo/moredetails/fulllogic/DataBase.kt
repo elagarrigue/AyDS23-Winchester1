@@ -12,6 +12,7 @@ private const val INFO_COLUMN = "info"
 private const val SOURCE_COLUMN = "source"
 private const val TABLE_ARTIST_NAME = "artists"
 private const val TABLE_ARTIST_QUERY = "create table $TABLE_ARTIST_NAME ($ID_COLUMN INTEGER PRIMARY KEY AUTOINCREMENT, $ARTIST_COLUMN string, $INFO_COLUMN string, $SOURCE_COLUMN integer)"
+
 class DataBase(context: Context?) : SQLiteOpenHelper(context, "dictionary.db", null, 1) {
 
     override fun onCreate(db: SQLiteDatabase) {
