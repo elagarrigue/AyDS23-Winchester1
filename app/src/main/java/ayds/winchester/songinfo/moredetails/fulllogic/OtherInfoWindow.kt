@@ -37,7 +37,7 @@ class OtherInfoWindow : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
         artistInfoTextView = findViewById(R.id.textPane2)
-        open(intent.getStringExtra("artistName").toString())
+        open(intent.getStringExtra(ARTIST_NAME_EXTRA).toString())
     }
 
     private fun open(artist: String) {
