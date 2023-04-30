@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Html
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -126,11 +127,16 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun setListener(urlString: String){
-        findViewById<View>(R.id.openUrlButton).setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(urlString)
-            startActivity(intent)
+        val urlButton : Button = findViewById(R.id.openUrlButton)
+        urlButton.setOnClickListener {
+            openUrlInExternalApp(urlString)
         }
+    }
+
+    private fun openUrlInExternalApp(urlString: String){
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(urlString)
+        startActivity(intent)
     }
 
     private fun loadImage(imageUrl: String) {
