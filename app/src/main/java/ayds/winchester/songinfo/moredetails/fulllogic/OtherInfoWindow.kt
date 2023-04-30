@@ -29,32 +29,16 @@ private const val PAGE_ID = "pageid"
 private const val SEARCH = "search"
 
 class OtherInfoWindow : AppCompatActivity() {
-    private lateinit var artistInfoTextView: TextView
-    private lateinit var wikipediaAPI: WikipediaAPI
     private val dataBase = DataBase(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
-        artistInfoTextView = findViewById(R.id.textPane2)
         open(intent.getStringExtra(ARTIST_NAME_EXTRA).toString())
     }
 
     private fun open(artist: String) {
-        createWikipediaAPI()
         getArtistInfo(artist)
-    }
-
-    private fun createWikipediaAPI(){
-        val retrofit = createRetrofit()
-        wikipediaAPI = retrofit.create(WikipediaAPI::class.java)
-    }
-
-    private fun createRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(WIKIPEDIA_BASE_URL)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
     }
 
     private fun getArtistInfo(artistName: String) {
@@ -92,7 +76,20 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun getArtistInfoFromService(artistName: String): Response<String>{
+        val wikipediaAPI = createWikipediaAPI()
         return wikipediaAPI.getArtistInfo(artistName).execute()
+    }
+    
+    private fun createRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(WIKIPEDIA_BASE_URL)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .build()
+    }
+
+    private fun createWikipediaAPI(): WikipediaAPI {
+        val retrofit = createRetrofit()
+        return retrofit.create(WikipediaAPI::class.java)
     }
 
     private fun resolveInfoSong(snippet: JsonElement?, artistName: String): String{
@@ -145,6 +142,7 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun setText(finalText: String?) {
+        val artistInfoTextView : TextView = findViewById(R.id.textPane2)
         runOnUiThread {
             artistInfoTextView.text = Html.fromHtml(finalText)
         }
