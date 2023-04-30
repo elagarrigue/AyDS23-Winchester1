@@ -30,19 +30,17 @@ private const val SEARCH = "search"
 
 class OtherInfoWindow : AppCompatActivity() {
     private lateinit var artistInfoTextView: TextView
-    private lateinit var dataBase: DataBase
     private lateinit var wikipediaAPI: WikipediaAPI
+    private val dataBase = DataBase(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
         artistInfoTextView = findViewById(R.id.textPane2)
-        open(intent.getStringExtra("artistName"))
+        open(intent.getStringExtra("artistName").toString())
     }
 
-    private fun open(artist: String?) {
-        dataBase = DataBase(this)
-        dataBase.saveArtist("test", "sarasa")
+    private fun open(artist: String) {
         createWikipediaAPI()
         getArtistInfo(artist)
     }
@@ -59,7 +57,7 @@ class OtherInfoWindow : AppCompatActivity() {
             .build()
     }
 
-    private fun getArtistInfo(artistName: String?) {
+    private fun getArtistInfo(artistName: String) {
         Thread {
             var infoSong = getArtistInfoFromDataBase(artistName)
             infoSong = infoSong?.let { "[*]$it" } ?: handleNullInfoSong(artistName)
@@ -68,11 +66,11 @@ class OtherInfoWindow : AppCompatActivity() {
         }.start()
     }
 
-    private fun getArtistInfoFromDataBase(artistName: String?): String? {
-        return artistName?.let { dataBase.getInfo(artistName) }
+    private fun getArtistInfoFromDataBase(artistName: String): String? {
+        return dataBase.getInfo(artistName)
     }
 
-    private fun handleNullInfoSong(artistName: String?): String {
+    private fun handleNullInfoSong(artistName: String): String {
         var infoSong = ""
         try {
             infoSong = handleNullInfoSongAux(artistName)
@@ -82,7 +80,7 @@ class OtherInfoWindow : AppCompatActivity() {
         return infoSong
     }
 
-    private fun handleNullInfoSongAux(artistName: String?): String {
+    private fun handleNullInfoSongAux(artistName: String): String {
         val callResponse = getArtistInfoFromService(artistName)
         val query = getQuery(callResponse)
         val snippet = getSnippet(query)
@@ -93,11 +91,11 @@ class OtherInfoWindow : AppCompatActivity() {
         return infoSong
     }
 
-    private fun getArtistInfoFromService(artistName: String?): Response<String>{
+    private fun getArtistInfoFromService(artistName: String): Response<String>{
         return wikipediaAPI.getArtistInfo(artistName).execute()
     }
 
-    private fun resolveInfoSong(snippet: JsonElement?, artistName: String?): String{
+    private fun resolveInfoSong(snippet: JsonElement?, artistName: String): String{
         val infoSong = snippet?.let {
             val infoSong = formatInfoSong(snippet,artistName)
             saveInDataBase(infoSong, artistName)
@@ -106,13 +104,13 @@ class OtherInfoWindow : AppCompatActivity() {
         return infoSong
     }
 
-    private fun formatInfoSong(snippet: JsonElement, artistName: String?): String {
+    private fun formatInfoSong(snippet: JsonElement, artistName: String): String {
         var infoSong = snippet.asString.replace("\\n", "\n")
         infoSong = textToHtml(infoSong, artistName)
         return infoSong
     }
 
-    private fun saveInDataBase(infoSong: String?, artistName: String?) {
+    private fun saveInDataBase(infoSong: String?, artistName: String) {
         dataBase.saveArtist(artistName, infoSong)
     }
 
