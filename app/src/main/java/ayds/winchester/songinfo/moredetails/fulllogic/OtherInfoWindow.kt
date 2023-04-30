@@ -79,13 +79,8 @@ class OtherInfoWindow : AppCompatActivity() {
         val wikipediaAPI = createWikipediaAPI()
         return wikipediaAPI.getArtistInfo(artistName).execute()
     }
-    
-    private fun createRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(WIKIPEDIA_BASE_URL)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .build()
-    }
+
+    private fun createRetrofit() = Retrofit.Builder().baseUrl(WIKIPEDIA_BASE_URL).addConverterFactory(ScalarsConverterFactory.create()).build()
 
     private fun createWikipediaAPI(): WikipediaAPI {
         val retrofit = createRetrofit()
