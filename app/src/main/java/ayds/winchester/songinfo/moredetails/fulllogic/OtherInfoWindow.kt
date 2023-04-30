@@ -27,6 +27,9 @@ private const val QUERY = "query"
 private const val SNIPPET = "snippet"
 private const val PAGE_ID = "pageid"
 private const val SEARCH = "search"
+private const val HTML_WIDTH = "<html><div width=400>"
+private const val HTML_FONT_OPEN = "<font face=\"arial\">"
+private const val HTML_FONT_CLOSE = "</font></div></html>"
 
 class OtherInfoWindow : AppCompatActivity() {
     private val dataBase = DataBase(this)
@@ -108,8 +111,8 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun textToHtml(text: String, term: String?): String {
         val builder = StringBuilder()
-        builder.append("<html><div width=400>")
-        builder.append("<font face=\"arial\">")
+        builder.append(HTML_WIDTH)
+        builder.append(HTML_FONT_OPEN)
         val textWithBold = text
             .replace("'", " ")
             .replace("\n", "<br>")
@@ -118,7 +121,7 @@ class OtherInfoWindow : AppCompatActivity() {
                 "<b>" + term?.uppercase(Locale.getDefault()) + "</b>"
             )
         builder.append(textWithBold)
-        builder.append("</font></div></html>")
+        builder.append(HTML_FONT_CLOSE)
         return builder.toString()
     }
 
