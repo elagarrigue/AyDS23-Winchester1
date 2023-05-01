@@ -48,15 +48,21 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun startThreadForInfo(artistName: String) {
         Thread {
             val artist = getArtist(artistName)
-            loadImage(WIKIPEDIA_LOGO)
-            setText(infoSong)
+            displayArtistInfo(artist)
         }.start()
     }
 
+    private fun displayArtistInfo(artist: Artist) {
+        loadImage(WIKIPEDIA_LOGO)
+        setText(artist.artistInfo)
+        setListener(artist.wikipediaUrl)
+    }
+
     private fun getArtist(artistName: String): Artist {
+        val wikipediaUrl = getArticleUrl(artistName)
         var infoSong = getArtistInfoFromDataBase(artistName)
         infoSong = infoSong?.let { "[*]$it" } ?: getArtistInfoShell(artistName)
-        return Artist(name = artistName, artistInfo = infoSong)
+        return Artist(name = artistName, artistInfo = infoSong, wikipediaUrl = wikipediaUrl,isInDataBase = true)
     }
 
     private fun getArtistInfoFromDataBase(artistName: String): String? {
@@ -76,11 +82,14 @@ class OtherInfoWindow : AppCompatActivity() {
         val callResponse = getArtistInfoFromService(artistName)
         val query = getQuery(callResponse)
         val snippet = getSnippet(query)
+        return resolveInfoSong(snippet, artistName)
+    }
+
+    private fun getArticleUrl(artistName: String): String {
+        val callResponse = getArtistInfoFromService(artistName)
+        val query = getQuery(callResponse)
         val pageId = getPageId(query)
-        val infoSong = resolveInfoSong(snippet, artistName)
-        val urlString = "$WIKIPEDIA_ARTICLE_URL$pageId"
-        setListener(urlString)
-        return infoSong
+        return "$WIKIPEDIA_ARTICLE_URL$pageId"
     }
 
     private fun getArtistInfoFromService(artistName: String): Response<String>{
@@ -110,7 +119,7 @@ class OtherInfoWindow : AppCompatActivity() {
         return infoSong
     }
 
-    private fun saveInDataBase(infoSong: String?, artistName: String) {
+    private fun saveInDataBase(infoSong: String?, artistName: String){
         dataBase.saveArtist(artistName, infoSong)
     }
 
