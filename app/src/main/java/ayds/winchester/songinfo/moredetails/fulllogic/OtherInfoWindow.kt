@@ -42,33 +42,37 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun open(artist: String) {
-        getArtistInfo(artist)
+        startThreadForInfo(artist)
     }
 
-    private fun getArtistInfo(artistName: String) {
+    private fun startThreadForInfo(artistName: String) {
         Thread {
-            var infoSong = getArtistInfoFromDataBase(artistName)
-            infoSong = infoSong?.let { "[*]$it" } ?: handleNullInfoSong(artistName)
+            val artist = getArtist(artistName)
             loadImage(WIKIPEDIA_LOGO)
             setText(infoSong)
         }.start()
+    }
+
+    private fun getArtist(artistName: String): Artist {
+        var infoSong = getArtistInfoFromDataBase(artistName)
+        infoSong = infoSong?.let { "[*]$it" } ?: getArtistInfoShell(artistName)
+        return Artist(name = artistName, artistInfo = infoSong)
     }
 
     private fun getArtistInfoFromDataBase(artistName: String): String? {
         return dataBase.getInfo(artistName)
     }
 
-    private fun handleNullInfoSong(artistName: String): String {
-        var infoSong = ""
-        try {
-            infoSong = handleNullInfoSongAux(artistName)
+    private fun getArtistInfoShell(artistName: String): String {
+        return try {
+            getArtistInfo(artistName)
         } catch (e1: IOException) {
             e1.printStackTrace()
+            ""
         }
-        return infoSong
     }
 
-    private fun handleNullInfoSongAux(artistName: String): String {
+    private fun getArtistInfo(artistName: String): String {
         val callResponse = getArtistInfoFromService(artistName)
         val query = getQuery(callResponse)
         val snippet = getSnippet(query)
@@ -174,3 +178,10 @@ class OtherInfoWindow : AppCompatActivity() {
         const val ARTIST_NAME_EXTRA = "artistName"
     }
 }
+
+data class Artist(
+    val name : String,
+    var artistInfo : String,
+    var wikipediaUrl: String = WIKIPEDIA_BASE_URL,
+    var isInDataBase : Boolean = false
+)
