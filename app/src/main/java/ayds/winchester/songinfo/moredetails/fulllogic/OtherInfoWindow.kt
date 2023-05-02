@@ -47,9 +47,13 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun startThreadForInfo(artistName: String) {
         Thread {
-            val artist = getArtist(artistName)
-            displayArtistInfo(artist)
+            generateArtistInfo(artistName)
         }.start()
+    }
+
+    private fun generateArtistInfo(artistName: String){
+        val artist = getArtist(artistName)
+        displayArtistInfo(artist)
     }
 
     private fun displayArtistInfo(artist: Artist) {
@@ -171,16 +175,23 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getQuery(callResponse: Response<String>): JsonObject? {
         val gson = Gson()
-        val jobj = getJobj(gson,callResponse)
-        return jobj?.get(QUERY)?.asJsonObject
+        val jobj = getJobj(gson, callResponse)
+        val query = jobj?.get(QUERY)
+        return query?.asJsonObject
     }
 
     private fun getSnippet(query: JsonObject?): JsonElement? {
-        return query?.get(SEARCH)?.asJsonArray?.get(0)?.asJsonObject?.get(SNIPPET)
+        val searchArray = query?.get(SEARCH)?.asJsonArray
+        val firstSearchResult = searchArray?.get(0)
+        val firstSearchResultObj =  firstSearchResult?.asJsonObject
+        return firstSearchResultObj?.get(SNIPPET)
     }
 
     private fun getPageId(query: JsonObject?): JsonElement? {
-        return query?.get(SEARCH)?.asJsonArray?.get(0)?.asJsonObject?.get(PAGE_ID)
+        val searchArray = query?.get(SEARCH)?.asJsonArray
+        val firstResult = searchArray?.get(0)
+        val firstResultObj =  firstResult?.asJsonObject
+        return firstResultObj?.get(PAGE_ID)
     }
 
     companion object {
