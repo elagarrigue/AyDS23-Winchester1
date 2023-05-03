@@ -77,10 +77,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoFromRepository(artistName: String): String {
         return try {
             getArtistInfo(artistName)
-        } catch (e1: IOException){
-            e1.printStackTrace()
-            ""
-        }
+        } catch (e1: IOException){""}
     }
 
     private fun getArtistInfo(artistName: String): String {
