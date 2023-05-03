@@ -60,6 +60,6 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_
             items.add(info)
         }
         cursor.close()
-        return items.firstOrNull() ?: ""
+        return items.firstOrNull() ?: null
     }
 }
