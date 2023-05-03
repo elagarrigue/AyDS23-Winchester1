@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Html
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -105,12 +104,12 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun getQuery(callResponse: Response<String>): JsonObject? {
         val gson = Gson()
-        val jobj = getJobj(gson, callResponse)
-        val query = jobj?.get(QUERY)
+        val jsonObject = fromJsonToJsonObject(gson, callResponse)
+        val query = jsonObject?.get(QUERY)
         return query?.asJsonObject
     }
 
-    private fun getJobj(gson: Gson, callResponse: Response<String>): JsonObject? {
+    private fun fromJsonToJsonObject(gson: Gson, callResponse: Response<String>): JsonObject? {
         return gson.fromJson(callResponse.body(), JsonObject::class.java)
     }
 
