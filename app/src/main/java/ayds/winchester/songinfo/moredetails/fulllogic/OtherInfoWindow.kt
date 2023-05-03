@@ -39,22 +39,14 @@ class OtherInfoWindow : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
-        open(intent.getStringExtra(ARTIST_NAME_EXTRA).toString())
+        generateArtistInfo()
     }
 
-    private fun open(artist: String) {
-        startThreadForInfo(artist)
-    }
-
-    private fun startThreadForInfo(artistName: String) {
+    private fun generateArtistInfo() {
         Thread {
-            generateArtistInfo(artistName)
+            val artist = getArtist()
+            displayArtistInfo(artist)
         }.start()
-    }
-
-    private fun generateArtistInfo(artistName: String){
-        val artist = getArtist(artistName)
-        displayArtistInfo(artist)
     }
 
     private fun displayArtistInfo(artist: Artist) {
@@ -63,14 +55,16 @@ class OtherInfoWindow : AppCompatActivity() {
         setListener(artist.wikipediaUrl)
     }
 
-    private fun getArtist(artistName: String): Artist {
+    private fun getArtist(): Artist {
+        val artistName = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
+        val infoSong = getArtistInfoFromDataBase(artistName)
+        val artistInfo = infoSong?.let { formatFromDataBase(infoSong) } ?: getArtistInfoShell(artistName)
         val wikipediaUrl = getArticleUrl(artistName)
-        var infoSong = getArtistInfoFromDataBase(artistName)
-        infoSong = infoSong?.let { formatFromDataBase(infoSong!!) } ?: getArtistInfoShell(artistName)
-        return Artist(name = artistName, artistInfo = infoSong, wikipediaUrl = wikipediaUrl,isInDataBase = true)
+        return Artist(name = artistName, artistInfo = artistInfo, wikipediaUrl = wikipediaUrl,isInDataBase = true)
     }
 
     private fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"
+
     private fun getArtistInfoFromDataBase(artistName: String): String? {
         return dataBase.getInfo(artistName)
     }
@@ -200,7 +194,6 @@ class OtherInfoWindow : AppCompatActivity() {
         const val ARTIST_NAME_EXTRA = "artistName"
     }
 }
-
 data class Artist(
     val name : String,
     var artistInfo : String,
