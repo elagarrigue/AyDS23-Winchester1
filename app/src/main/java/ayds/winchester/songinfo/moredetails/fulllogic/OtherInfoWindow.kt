@@ -31,6 +31,7 @@ private const val SEARCH = "search"
 private const val HTML_WIDTH = "<html><div width=400>"
 private const val HTML_FONT_OPEN = "<font face=\"arial\">"
 private const val HTML_FONT_CLOSE = "</font></div></html>"
+private const val PREFIX_DATABASE = "[*]"
 
 class OtherInfoWindow : AppCompatActivity() {
     private val dataBase = DataBase(this)
@@ -65,10 +66,11 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtist(artistName: String): Artist {
         val wikipediaUrl = getArticleUrl(artistName)
         var infoSong = getArtistInfoFromDataBase(artistName)
-        infoSong = infoSong?.let { "[*]$it" } ?: getArtistInfoShell(artistName)
+        infoSong = infoSong?.let { formatFromDataBase(infoSong!!) } ?: getArtistInfoShell(artistName)
         return Artist(name = artistName, artistInfo = infoSong, wikipediaUrl = wikipediaUrl,isInDataBase = true)
     }
 
+    private fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"
     private fun getArtistInfoFromDataBase(artistName: String): String? {
         return dataBase.getInfo(artistName)
     }
