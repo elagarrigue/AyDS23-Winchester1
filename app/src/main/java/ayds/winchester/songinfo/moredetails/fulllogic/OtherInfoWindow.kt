@@ -73,7 +73,6 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"
 
-
     private fun getArtistInfoFromRepository(artistName: String): String {
         return try {
             getArtistInfo(artistName)

@@ -16,30 +16,23 @@ private const val DB_NAME = "dictionary.db"
 private const val DB_VERSION = 1
 
 class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
-
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             TABLE_ARTIST_QUERY
         )
     }
-
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
-
     fun saveArtist(artist: String?, info: String?) {
         writableDatabase.insert(TABLE_ARTIST_NAME, null, getValues(artist, info))
     }
-
     private fun getValues(artist: String?, info: String?) : ContentValues{
         val values = ContentValues()
         values.put(ARTIST_COLUMN, artist)
         values.put(INFO_COLUMN, info)
         values.put(SOURCE_COLUMN, 1)
-
         return values
     }
-
     fun getInfo(artist: String): String? = getArtistInfo(makeQuery(artist))
-
     private fun makeQuery(artist: String) : Cursor =
         readableDatabase.query(
             TABLE_ARTIST_NAME,
@@ -50,7 +43,6 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_
             null,
             "$ARTIST_COLUMN  DESC"
         )
-
     private fun getArtistInfo(cursor: Cursor) : String? {
         val items: MutableList<String> = ArrayList()
         if(cursor.moveToNext()){
@@ -60,7 +52,6 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_
             items.add(info)
         }
         cursor.close()
-        
         return items.firstOrNull() ?: null
     }
 }
