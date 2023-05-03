@@ -34,12 +34,23 @@ private const val HTML_FONT_CLOSE = "</font></div></html>"
 private const val PREFIX_DATABASE = "[*]"
 
 class OtherInfoWindow : AppCompatActivity() {
-    private val dataBase = DataBase(this)
+    private lateinit var dataBase : DataBase
+    private lateinit var urlButton : Button
+    private lateinit var artistInfoTextView : TextView
+    private lateinit var imageView : ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
+        initProperties()
         generateArtistInfo()
+    }
+
+    private fun initProperties(){
+        urlButton = findViewById(R.id.openUrlButton)
+        artistInfoTextView = findViewById(R.id.textPane2)
+        imageView = findViewById(R.id.imageView)
+        dataBase = DataBase(this)
     }
 
     private fun generateArtistInfo() {
@@ -167,19 +178,17 @@ class OtherInfoWindow : AppCompatActivity() {
 
     private fun loadImage(imageUrl: String) {
         runOnUiThread {
-            Picasso.get().load(imageUrl).into(findViewById<View>(R.id.imageView) as ImageView)
+            Picasso.get().load(imageUrl).into(imageView)
         }
     }
 
     private fun setText(finalText: String?) {
-        val artistInfoTextView : TextView = findViewById(R.id.textPane2)
         runOnUiThread {
             artistInfoTextView.text = Html.fromHtml(finalText)
         }
     }
 
     private fun setListener(urlString: String){
-        val urlButton : Button = findViewById(R.id.openUrlButton)
         urlButton.setOnClickListener {
             openUrlInExternalApp(urlString)
         }
