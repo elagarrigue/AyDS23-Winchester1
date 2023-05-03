@@ -62,7 +62,7 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtist(): Artist {
         val artistName = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
         val infoSong = getArtistInfoFromDataBase(artistName)
-        val artistInfo = infoSong?.let { formatFromDataBase(infoSong) } ?: getArtistInfoShell(artistName)
+        val artistInfo = infoSong?.let { formatFromDataBase(infoSong) } ?: getArtistInfoFromRepository(artistName)
         val wikipediaUrl = getArticleUrl(artistName)
         return Artist(name = artistName, artistInfo = artistInfo, wikipediaUrl = wikipediaUrl,isInDataBase = true)
     }
@@ -74,10 +74,10 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"
 
 
-    private fun getArtistInfoShell(artistName: String): String {
+    private fun getArtistInfoFromRepository(artistName: String): String {
         return try {
             getArtistInfo(artistName)
-        } catch (e1: IOException) {
+        } catch (e1: IOException){
             e1.printStackTrace()
             ""
         }
