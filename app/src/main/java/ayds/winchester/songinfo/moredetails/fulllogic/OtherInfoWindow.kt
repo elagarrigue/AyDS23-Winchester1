@@ -60,12 +60,14 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun getArtist(): Artist {
-        val artistName = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
+        val artistName = getArtistNameFromIntent()
         val infoSong = getArtistInfoFromDataBase(artistName)
         val artistInfo = infoSong?.let { formatFromDataBase(infoSong) } ?: getArtistInfoFromRepository(artistName)
         val wikipediaUrl = getArticleUrl(artistName)
         return Artist(name = artistName, artistInfo = artistInfo, wikipediaUrl = wikipediaUrl,isInDataBase = true)
     }
+
+    private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
 
     private fun getArtistInfoFromDataBase(artistName: String): String? {
         return dataBase.getInfo(artistName)
@@ -203,5 +205,5 @@ data class Artist(
     val name : String,
     var artistInfo : String,
     var wikipediaUrl: String = WIKIPEDIA_BASE_URL,
-    var isInDataBase : Boolean = false
+    var isInDataBase : Boolean
 )
