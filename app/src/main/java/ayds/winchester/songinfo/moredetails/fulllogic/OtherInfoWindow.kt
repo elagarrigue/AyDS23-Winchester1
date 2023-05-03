@@ -49,12 +49,6 @@ class OtherInfoWindow : AppCompatActivity() {
         }.start()
     }
 
-    private fun displayArtistInfo(artist: Artist) {
-        loadImage(WIKIPEDIA_LOGO)
-        setText(artist.artistInfo)
-        setListener(artist.wikipediaUrl)
-    }
-
     private fun getArtist(): Artist {
         val artistName = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
         val infoSong = getArtistInfoFromDataBase(artistName)
@@ -63,11 +57,12 @@ class OtherInfoWindow : AppCompatActivity() {
         return Artist(name = artistName, artistInfo = artistInfo, wikipediaUrl = wikipediaUrl,isInDataBase = true)
     }
 
-    private fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"
-
     private fun getArtistInfoFromDataBase(artistName: String): String? {
         return dataBase.getInfo(artistName)
     }
+
+    private fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"
+
 
     private fun getArtistInfoShell(artistName: String): String {
         return try {
@@ -85,23 +80,34 @@ class OtherInfoWindow : AppCompatActivity() {
         return resolveInfoSong(snippet, artistName)
     }
 
-    private fun getArticleUrl(artistName: String): String {
-        val callResponse = getArtistInfoFromService(artistName)
-        val query = getQuery(callResponse)
-        val pageId = getPageId(query)
-        return "$WIKIPEDIA_ARTICLE_URL$pageId"
-    }
-
     private fun getArtistInfoFromService(artistName: String): Response<String>{
         val wikipediaAPI = createWikipediaAPI()
         return wikipediaAPI.getArtistInfo(artistName).execute()
     }
 
-    private fun createRetrofit() = Retrofit.Builder().baseUrl(WIKIPEDIA_BASE_URL).addConverterFactory(ScalarsConverterFactory.create()).build()
-
     private fun createWikipediaAPI(): WikipediaAPI {
         val retrofit = createRetrofit()
         return retrofit.create(WikipediaAPI::class.java)
+    }
+
+    private fun createRetrofit() = Retrofit.Builder().baseUrl(WIKIPEDIA_BASE_URL).addConverterFactory(ScalarsConverterFactory.create()).build()
+
+    private fun getQuery(callResponse: Response<String>): JsonObject? {
+        val gson = Gson()
+        val jobj = getJobj(gson, callResponse)
+        val query = jobj?.get(QUERY)
+        return query?.asJsonObject
+    }
+
+    private fun getJobj(gson: Gson, callResponse: Response<String>): JsonObject? {
+        return gson.fromJson(callResponse.body(), JsonObject::class.java)
+    }
+
+    private fun getSnippet(query: JsonObject?): JsonElement? {
+        val searchArray = query?.get(SEARCH)?.asJsonArray
+        val firstSearchResult = searchArray?.get(0)
+        val firstSearchResultObj =  firstSearchResult?.asJsonObject
+        return firstSearchResultObj?.get(SNIPPET)
     }
 
     private fun resolveInfoSong(snippet: JsonElement?, artistName: String): String{
@@ -117,10 +123,6 @@ class OtherInfoWindow : AppCompatActivity() {
         var infoSong = snippet.asString.replace("\\n", "\n")
         infoSong = textToHtml(infoSong, artistName)
         return infoSong
-    }
-
-    private fun saveInDataBase(infoSong: String?, artistName: String){
-        dataBase.saveArtist(artistName, infoSong)
     }
 
     private fun textToHtml(text: String, term: String?): String {
@@ -139,17 +141,28 @@ class OtherInfoWindow : AppCompatActivity() {
         return builder.toString()
     }
 
-    private fun setListener(urlString: String){
-        val urlButton : Button = findViewById(R.id.openUrlButton)
-        urlButton.setOnClickListener {
-            openUrlInExternalApp(urlString)
-        }
+    private fun saveInDataBase(infoSong: String?, artistName: String){
+        dataBase.saveArtist(artistName, infoSong)
     }
 
-    private fun openUrlInExternalApp(urlString: String){
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(urlString)
-        startActivity(intent)
+    private fun getArticleUrl(artistName: String): String {
+        val callResponse = getArtistInfoFromService(artistName)
+        val query = getQuery(callResponse)
+        val pageId = getPageId(query)
+        return "$WIKIPEDIA_ARTICLE_URL$pageId"
+    }
+
+    private fun getPageId(query: JsonObject?): JsonElement? {
+        val searchArray = query?.get(SEARCH)?.asJsonArray
+        val firstResult = searchArray?.get(0)
+        val firstResultObj =  firstResult?.asJsonObject
+        return firstResultObj?.get(PAGE_ID)
+    }
+
+    private fun displayArtistInfo(artist: Artist) {
+        loadImage(WIKIPEDIA_LOGO)
+        setText(artist.artistInfo)
+        setListener(artist.wikipediaUrl)
     }
 
     private fun loadImage(imageUrl: String) {
@@ -165,29 +178,17 @@ class OtherInfoWindow : AppCompatActivity() {
         }
     }
 
-    private fun getJobj(gson: Gson, callResponse: Response<String>): JsonObject? {
-        return gson.fromJson(callResponse.body(), JsonObject::class.java)
+    private fun setListener(urlString: String){
+        val urlButton : Button = findViewById(R.id.openUrlButton)
+        urlButton.setOnClickListener {
+            openUrlInExternalApp(urlString)
+        }
     }
 
-    private fun getQuery(callResponse: Response<String>): JsonObject? {
-        val gson = Gson()
-        val jobj = getJobj(gson, callResponse)
-        val query = jobj?.get(QUERY)
-        return query?.asJsonObject
-    }
-
-    private fun getSnippet(query: JsonObject?): JsonElement? {
-        val searchArray = query?.get(SEARCH)?.asJsonArray
-        val firstSearchResult = searchArray?.get(0)
-        val firstSearchResultObj =  firstSearchResult?.asJsonObject
-        return firstSearchResultObj?.get(SNIPPET)
-    }
-
-    private fun getPageId(query: JsonObject?): JsonElement? {
-        val searchArray = query?.get(SEARCH)?.asJsonArray
-        val firstResult = searchArray?.get(0)
-        val firstResultObj =  firstResult?.asJsonObject
-        return firstResultObj?.get(PAGE_ID)
+    private fun openUrlInExternalApp(urlString: String){
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(urlString)
+        startActivity(intent)
     }
 
     companion object {
