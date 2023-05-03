@@ -53,13 +53,14 @@ class DataBase(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_
 
     private fun getArtistInfo(cursor: Cursor) : String? {
         val items: MutableList<String> = ArrayList()
-        while (cursor.moveToNext()) {
+        if(cursor.moveToNext()){
             val info = cursor.getString(
                 cursor.getColumnIndexOrThrow(INFO_COLUMN)
             )
             items.add(info)
         }
         cursor.close()
+        
         return items.firstOrNull() ?: null
     }
 }
