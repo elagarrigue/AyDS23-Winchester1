@@ -1,4 +1,7 @@
 package ayds.winchester.songinfo.moredetails.presentation
 
-sealed class OtherInfoUiEvent {
+sealed class OtherInfoUiEvent { //VER EN DONDE SE USA ESTO
+
+    object ViewFullArticle : OtherInfoUiEvent()
+
 }

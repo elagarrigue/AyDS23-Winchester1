@@ -33,11 +33,12 @@ private const val HTML_FONT_CLOSE = "</font></div></html>"
 private const val PREFIX_DATABASE = "[*]"
 
 class OtherInfoWindow : AppCompatActivity() {
-    private lateinit var dataBase : DataBase
-    private lateinit var urlButton : Button
-    private lateinit var artistInfoTextView : TextView
-    private lateinit var imageView : ImageView
+    private lateinit var dataBase: DataBase
+    private lateinit var urlButton: Button
+    private lateinit var artistInfoTextView: TextView
+    private lateinit var imageView: ImageView
 
+    /* EN OtherInfoView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
@@ -45,49 +46,57 @@ class OtherInfoWindow : AppCompatActivity() {
         generateArtistInfo()
     }
 
+
     private fun initProperties(){
         urlButton = findViewById(R.id.openUrlButton)
         artistInfoTextView = findViewById(R.id.textPane2)
         imageView = findViewById(R.id.imageView)
         dataBase = DataBase(this)
-    }
+    }*/
 
+    /* EN Presenter
     private fun generateArtistInfo() {
         Thread {
             val artist = getArtist()
             displayArtistInfo(artist)
         }.start()
-    }
+    }*/
 
+    /* ESTA EN REPOSITORY
     private fun getArtist(): Artist {
         val artistName = getArtistNameFromIntent()
         val infoSong = getArtistInfoFromDataBase(artistName)
         val artistInfo = infoSong?.let { formatFromDataBase(infoSong) } ?: getArtistInfoFromRepository(artistName)
         val wikipediaUrl = getArticleUrl(artistName)
         return Artist(name = artistName, artistInfo = artistInfo, wikipediaUrl = wikipediaUrl,isInDataBase = true)
-    }
+    }*/
 
-    private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
+    /* EN REPOSITORY
+    private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()*/
 
+    /* En WikipediaLocalStorageImpl
     private fun getArtistInfoFromDataBase(artistName: String): String? {
         return dataBase.getInfo(artistName)
     }
 
-    private fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"
+    private fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"*/
 
+    /* EN repository
     private fun getArtistInfoFromRepository(artistName: String): String {
         return try {
             getArtistInfo(artistName)
         } catch (e1: IOException){""}
-    }
+    }*/
 
+    /* EN WikipediaToArtistResolver
     private fun getArtistInfo(artistName: String): String {
         val callResponse = getArtistInfoFromService(artistName)
         val query = getQuery(callResponse)
         val snippet = getSnippet(query)
         return resolveInfoSong(snippet, artistName)
-    }
+    }*/
 
+    /* EN WikipediaTrackServiceImpl
     private fun getArtistInfoFromService(artistName: String): Response<String>{
         val wikipediaAPI = createWikipediaAPI()
         return wikipediaAPI.getArtistInfo(artistName).execute()
@@ -99,7 +108,8 @@ class OtherInfoWindow : AppCompatActivity() {
     }
 
     private fun createRetrofit() = Retrofit.Builder().baseUrl(WIKIPEDIA_BASE_URL).addConverterFactory(ScalarsConverterFactory.create()).build()
-
+*/
+    /* EN WikipediaToArtistResolver
     private fun getQuery(callResponse: Response<String>): JsonObject? {
         val gson = Gson()
         val jsonObject = fromJsonToJsonObject(gson, callResponse)
@@ -116,8 +126,9 @@ class OtherInfoWindow : AppCompatActivity() {
         val firstSearchResult = searchArray?.get(0)
         val firstSearchResultObj =  firstSearchResult?.asJsonObject
         return firstSearchResultObj?.get(SNIPPET)
-    }
+    }*/
 
+    /* En WikipediaToArtistResolver
     private fun resolveInfoSong(snippet: JsonElement?, artistName: String): String{
         val infoSong = snippet?.let {
             val infoSong = formatInfoSong(snippet,artistName)
@@ -125,8 +136,9 @@ class OtherInfoWindow : AppCompatActivity() {
             infoSong
         } ?: NO_RESULT
         return infoSong
-    }
+    }*/
 
+    /* EN InfoSongFormat
     private fun formatInfoSong(snippet: JsonElement, artistName: String): String {
         var infoSong = snippet.asString.replace("\\n", "\n")
         infoSong = textToHtml(infoSong, artistName)
@@ -147,12 +159,14 @@ class OtherInfoWindow : AppCompatActivity() {
         builder.append(textWithBold)
         builder.append(HTML_FONT_CLOSE)
         return builder.toString()
-    }
+    }*/
 
+    /*En REPOSITORY
     private fun saveInDataBase(infoSong: String?, artistName: String){
         dataBase.saveArtist(artistName, infoSong)
-    }
+    }*/
 
+    /* EN WikipediaToArtistResolver
     private fun getArticleUrl(artistName: String): String {
         val callResponse = getArtistInfoFromService(artistName)
         val query = getQuery(callResponse)
@@ -165,8 +179,10 @@ class OtherInfoWindow : AppCompatActivity() {
         val firstResult = searchArray?.get(0)
         val firstResultObj =  firstResult?.asJsonObject
         return firstResultObj?.get(PAGE_ID)
-    }
+    }*/
 
+
+    /* EN OtherInfoView
     private fun displayArtistInfo(artist: Artist) {
         loadImage(WIKIPEDIA_LOGO)
         setText(artist.artistInfo)
@@ -195,15 +211,18 @@ class OtherInfoWindow : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(urlString)
         startActivity(intent)
-    }
+    }*/
 
+    /*EN REPOSITORY
     companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
-    }
+    }*/
 }
+
+/*
 data class Artist(
     val name : String,
     var artistInfo : String,
     var wikipediaUrl: String = WIKIPEDIA_BASE_URL,
     var isInDataBase : Boolean
-)
+)*/
