@@ -30,10 +30,15 @@ class OtherInfoViewActivity(
     private val observer: Observer<OtherInfoUiState> =
         Observer { value -> displayArtistInfo(value)
         }
+
+    private fun initObservers() {
+        presenter.uiStateObservable.subscribe(observer)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
         initProperties()
+        initObservers()
         presenter.generateArtistInfo()
     }
 

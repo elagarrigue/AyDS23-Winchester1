@@ -10,16 +10,18 @@ class WikipediaTrackServiceImpl(
     private val wikipediaAPI : WikipediaAPI,
     private val wikipediaToArtistResolver : WikipediaToArtistResolver,
 ): WikipediaTrackService {
-    private fun getArtistInfoFromService(artistName: String): Response<String> {
+    override fun getArtistInfoFromService(artistName: String): Response<String> {
         return wikipediaAPI.getArtistInfo(artistName).execute()
     }
-
-    private fun createWikipediaAPI(): WikipediaAPI {
-        val retrofit = createRetrofit()
-        return retrofit.create(WikipediaAPI::class.java)
+    override fun getArticleUrl(artistName: String): String{
+        val callResponse = getArtistInfoFromService(artistName)
+        return wikipediaToArtistResolver.getArticleUrl(artistName, callResponse)
     }
 
-    private fun createRetrofit() = Retrofit.Builder().baseUrl(WIKIPEDIA_BASE_URL).addConverterFactory(
-        ScalarsConverterFactory.create()).build()
+    override fun getArtistInfo(artistName: String): String{
+        val callResponse = getArtistInfoFromService(artistName)
+        return wikipediaToArtistResolver.getArtistInfo(artistName, callResponse)
+    }
+
 
 }

@@ -12,11 +12,11 @@ class ArtistRepositoryImpl(
     private val wikipediaTrackService: WikipediaTrackService
 ): ArtistRepository {
 
-    override fun getArtist(): Artist {
+    override fun getArtist(): Artist.WikipediaArtist {
         val artistName = getArtistNameFromIntent()
         val infoSong = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
         val artistInfo = infoSong?.let { wikipediaLocalStorage.formatFromDataBase(infoSong) } ?: getArtistInfoFromRepository(artistName)
-        val wikipediaUrl = getArticleUrl(artistName)
+        val wikipediaUrl = wikipediaTrackService.getArticleUrl(artistName)
         return Artist.WikipediaArtist(
             name = artistName,
             artistInfo = artistInfo,
@@ -29,7 +29,7 @@ class ArtistRepositoryImpl(
 
     private fun getArtistInfoFromRepository(artistName: String): String {
         return try {
-            getArtistInfo(artistName)
+            wikipediaTrackService.getArtistInfo(artistName)
         } catch (e1: IOException){""}
     }
 

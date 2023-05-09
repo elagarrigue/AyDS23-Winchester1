@@ -6,6 +6,7 @@ import ayds.winchester.songinfo.moredetails.domain.ArtistRepository
 import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 
 interface MoreDetailsPresenter{
+    val uiStateObservable: Observable<OtherInfoUiState>
     fun generateArtistInfo()
 }
 class MoreDetailsPresenterImpl(
@@ -14,7 +15,7 @@ class MoreDetailsPresenterImpl(
 ) : MoreDetailsPresenter {
 
     private val uiStateSubject = Subject<OtherInfoUiState>()
-    private val uiStateObservable: Observable<OtherInfoUiState> = uiStateSubject
+    override val uiStateObservable: Observable<OtherInfoUiState> = uiStateSubject
     override fun generateArtistInfo() {
         Thread {
             val artist = artistRepository.getArtist()
@@ -24,7 +25,7 @@ class MoreDetailsPresenterImpl(
         }.start()
     }
 
-    private fun createUiState(artist: Artist.WikipediaArtist?): OtherInfoUiState {
+    private fun createUiState(artist: Artist.WikipediaArtist): OtherInfoUiState {
         val snipet = artistRepository
         val info = format.formatInfoSong(artist) // VER SNIPPET
         return OtherInfoUiState(info, artist?.wikipediaUrl)

@@ -100,7 +100,9 @@ class OtherInfoWindow : AppCompatActivity() {
     private fun getArtistInfoFromService(artistName: String): Response<String>{
         val wikipediaAPI = createWikipediaAPI()
         return wikipediaAPI.getArtistInfo(artistName).execute()
-    }
+    }*/
+
+    /* EN Injector
 
     private fun createWikipediaAPI(): WikipediaAPI {
         val retrofit = createRetrofit()
