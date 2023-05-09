@@ -15,8 +15,7 @@ class ArtistRepositoryImpl(
     private val wikipediaTrackService: WikipediaTrackService
 ): ArtistRepository, AppCompatActivity() {
 
-    override fun getArtist(): Artist.WikipediaArtist {
-        val artistName = getArtistNameFromIntent()
+    override fun getArtist(artistName: String): Artist.WikipediaArtist {
         val infoSong = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
         val artistInfo = infoSong?.let { wikipediaLocalStorage.formatFromDataBase(infoSong) } ?: getArtistInfoFromRepository(artistName)
         val wikipediaUrl = wikipediaTrackService.getArticleUrl(artistName)
@@ -28,7 +27,6 @@ class ArtistRepositoryImpl(
         )
     }
 
-    private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
 
     private fun getArtistInfoFromRepository(artistName: String): String {
         var artistInfo = try {
@@ -37,8 +35,6 @@ class ArtistRepositoryImpl(
         if (artistInfo != NO_RESULT) wikipediaLocalStorage.saveArtist(artistName, artistInfo)
         return artistInfo
     }
-    companion object {
-        const val ARTIST_NAME_EXTRA = "artistName"
-    }
+
 
 }

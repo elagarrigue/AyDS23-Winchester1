@@ -1,5 +1,6 @@
 package ayds.winchester.songinfo.moredetails.injector
 
+import android.content.Context
 import ayds.winchester.songinfo.moredetails.data.ArtistRepositoryImpl
 import ayds.winchester.songinfo.moredetails.data.external.WikipediaTrackService
 import ayds.winchester.songinfo.moredetails.data.external.tracks.WikipediaAPI
@@ -9,10 +10,7 @@ import ayds.winchester.songinfo.moredetails.data.external.tracks.WikipediaTrackS
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
 import ayds.winchester.songinfo.moredetails.data.local.sqldb.WikipediaLocalStorageImpl
 import ayds.winchester.songinfo.moredetails.domain.ArtistRepository
-import ayds.winchester.songinfo.moredetails.presentation.InfoSongFormat
-import ayds.winchester.songinfo.moredetails.presentation.InfoSongFormatImpl
-import ayds.winchester.songinfo.moredetails.presentation.MoreDetailsPresenter
-import ayds.winchester.songinfo.moredetails.presentation.MoreDetailsPresenterImpl
+import ayds.winchester.songinfo.moredetails.presentation.*
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
@@ -22,13 +20,13 @@ object MoreDetailsInjector {
     private lateinit var artistRepository : ArtistRepository
     private lateinit var presenter : MoreDetailsPresenter
 
-    fun init(){
-        initRepository()
+    fun init(otherInfoView: OtherInfoView){
+        initRepository(otherInfoView)
         initPresenter()
     }
 
-    private fun initRepository(){
-        val wikipediaLocalStorage: WikipediaLocalStorage = WikipediaLocalStorageImpl()
+    private fun initRepository(otherInfoView: OtherInfoView){
+        val wikipediaLocalStorage: WikipediaLocalStorage = WikipediaLocalStorageImpl(otherInfoView as Context)
         val wikipediaTrackService: WikipediaTrackService = generateWikipediaTrackService()
         this.artistRepository = ArtistRepositoryImpl(wikipediaLocalStorage,wikipediaTrackService)
     }

@@ -10,7 +10,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.observer.Observer
 import ayds.winchester.songinfo.R
+import ayds.winchester.songinfo.moredetails.data.ArtistRepositoryImpl
 import ayds.winchester.songinfo.moredetails.fulllogic.DataBase
+import ayds.winchester.songinfo.moredetails.injector.MoreDetailsInjector
 import com.squareup.picasso.Picasso
 
 private const val WIKIPEDIA_LOGO = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
@@ -40,8 +42,16 @@ class OtherInfoViewActivity(
         setContentView(R.layout.activity_other_info)
         initProperties()
         initObservers()
-        presenter.generateArtistInfo()
+        initInjector()
+        val artistName = getArtistNameFromIntent()
+        presenter.generateArtistInfo(artistName)
     }
+
+    private fun initInjector(){
+        MoreDetailsInjector.init(this)
+    }
+
+    private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
 
     override fun displayArtistInfo(artist: OtherInfoUiState) {
         loadImage(WIKIPEDIA_LOGO)
@@ -78,5 +88,9 @@ class OtherInfoViewActivity(
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(urlString)
         startActivity(intent)
+    }
+
+    companion object {
+        const val ARTIST_NAME_EXTRA = "artistName"
     }
 }
