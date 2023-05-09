@@ -6,11 +6,14 @@ import ayds.winchester.songinfo.moredetails.domain.ArtistRepository
 import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 import java.io.IOException
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+
+private const val NO_RESULT = "No Results"
 
 class ArtistRepositoryImpl(
     private val wikipediaLocalStorage: WikipediaLocalStorage,
     private val wikipediaTrackService: WikipediaTrackService
-): ArtistRepository {
+): ArtistRepository, AppCompatActivity() {
 
     override fun getArtist(): Artist.WikipediaArtist {
         val artistName = getArtistNameFromIntent()
@@ -28,15 +31,12 @@ class ArtistRepositoryImpl(
     private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
 
     private fun getArtistInfoFromRepository(artistName: String): String {
-        return try {
+        var artistInfo = try {
             wikipediaTrackService.getArtistInfo(artistName)
         } catch (e1: IOException){""}
+        if (artistInfo != NO_RESULT) wikipediaLocalStorage.saveArtist(artistName, artistInfo)
+        return artistInfo
     }
-
-    private fun saveInDataBase(infoSong: String?, artistName: String){
-        dataBase.saveArtist(artistName, infoSong)
-    }
-
     companion object {
         const val ARTIST_NAME_EXTRA = "artistName"
     }

@@ -1,5 +1,7 @@
 package ayds.winchester.songinfo.moredetails.data.external.tracks
 
+import ayds.winchester.songinfo.moredetails.presentation.InfoSongFormat
+import ayds.winchester.songinfo.moredetails.presentation.InfoSongFormatImpl
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -17,6 +19,8 @@ interface WikipediaToArtistResolver {
     fun getArticleUrl(artistName: String, callResponse: Response<String>): String
 }
 internal class WikipediaToArtistResolverImpl : WikipediaToArtistResolver {
+
+    private val format: InfoSongFormat = InfoSongFormatImpl()
 
     override fun getArtistInfo(artistName: String, callResponse: Response<String>): String {
         val query = getQuery(callResponse)
@@ -44,8 +48,7 @@ internal class WikipediaToArtistResolverImpl : WikipediaToArtistResolver {
 
     private fun resolveInfoSong(snippet: JsonElement?, artistName: String): String{
         val infoSong = snippet?.let {
-            val infoSong = formatInfoSong(snippet,artistName)
-            saveInDataBase(infoSong, artistName)
+            val infoSong = format.formatInfoSong(snippet,artistName)
             infoSong
         } ?: NO_RESULT
         return infoSong
