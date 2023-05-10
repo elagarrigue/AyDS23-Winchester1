@@ -18,6 +18,7 @@ interface OtherInfoView {
 
     fun onCreate(savedInstanceState: Bundle?)
     fun displayArtistInfo(artist: OtherInfoUiState)
+    fun setPresenter(presenterInj: MoreDetailsPresenter)
 
 }
 
@@ -38,14 +39,18 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
         initProperties()
-        presenter = initInjector()
+        initInjector()
         initObservers()
         val artistName = getArtistNameFromIntent()
         presenter.generateArtistInfo(artistName)
     }
 
-    private fun initInjector(): MoreDetailsPresenter {
-        return MoreDetailsInjector.init(this)
+    private fun initInjector() {
+        MoreDetailsInjector.init(this)
+    }
+
+    override fun setPresenter(presenterInj: MoreDetailsPresenter) {
+        this.presenter = presenterInj
     }
 
     private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()

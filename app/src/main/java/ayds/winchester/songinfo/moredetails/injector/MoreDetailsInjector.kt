@@ -20,10 +20,9 @@ object MoreDetailsInjector {
     private lateinit var artistRepository : ArtistRepository
     private lateinit var presenter : MoreDetailsPresenter
 
-    fun init(otherInfoView: OtherInfoView) : MoreDetailsPresenter{
+    fun init(otherInfoView: OtherInfoView){
         initRepository(otherInfoView)
         initPresenter(otherInfoView)
-        return presenter
     }
 
     private fun initRepository(otherInfoView: OtherInfoView){
@@ -49,5 +48,6 @@ object MoreDetailsInjector {
     private fun initPresenter(otherInfoView: OtherInfoView){
         val format : InfoSongFormat = InfoSongFormatImpl()
         this.presenter = MoreDetailsPresenterImpl(artistRepository,format)
+        otherInfoView.setPresenter(this.presenter)
     }
 }

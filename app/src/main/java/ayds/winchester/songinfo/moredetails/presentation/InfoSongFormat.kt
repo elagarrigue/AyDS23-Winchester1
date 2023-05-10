@@ -19,10 +19,7 @@ class InfoSongFormatImpl() : InfoSongFormat {
     override fun formatInfoSong(artist: Artist.WikipediaArtist): String {
         return when(artist){
             is Artist.WikipediaArtist ->
-                (if (artist.isInDataBase) PREFIX_DATABASE else "") +
-                        {   val text = artist.artistInfo.replace("\\n", "\n")
-                            textToHtml(text, artist.name)}
-
+                textToHtml(artist.artistInfo, artist.name)
             else -> NO_RESULT
         }
     }
@@ -34,7 +31,7 @@ class InfoSongFormatImpl() : InfoSongFormat {
     }
 
     private fun textToHtml(text: String, term: String?): String {
-        //val text = text.replace("\\n", "\n")
+        val text = text.replace("\\n", "\n")
         val builder = StringBuilder()
         builder.append(HTML_WIDTH)
         builder.append(HTML_FONT_OPEN)
