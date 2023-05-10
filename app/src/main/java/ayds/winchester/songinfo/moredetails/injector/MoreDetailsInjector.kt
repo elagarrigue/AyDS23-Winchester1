@@ -20,9 +20,10 @@ object MoreDetailsInjector {
     private lateinit var artistRepository : ArtistRepository
     private lateinit var presenter : MoreDetailsPresenter
 
-    fun init(otherInfoView: OtherInfoView){
+    fun init(otherInfoView: OtherInfoView) : MoreDetailsPresenter{
         initRepository(otherInfoView)
-        initPresenter()
+        initPresenter(otherInfoView)
+        return presenter
     }
 
     private fun initRepository(otherInfoView: OtherInfoView){
@@ -45,7 +46,7 @@ object MoreDetailsInjector {
     private fun createRetrofit() = Retrofit.Builder().baseUrl(WIKIPEDIA_BASE_URL).addConverterFactory(
         ScalarsConverterFactory.create()).build()
 
-    private fun initPresenter(){
+    private fun initPresenter(otherInfoView: OtherInfoView){
         val format : InfoSongFormat = InfoSongFormatImpl()
         this.presenter = MoreDetailsPresenterImpl(artistRepository,format)
     }

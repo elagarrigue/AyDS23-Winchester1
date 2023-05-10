@@ -10,8 +10,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import ayds.observer.Observer
 import ayds.winchester.songinfo.R
-import ayds.winchester.songinfo.moredetails.data.ArtistRepositoryImpl
-import ayds.winchester.songinfo.moredetails.fulllogic.DataBase
 import ayds.winchester.songinfo.moredetails.injector.MoreDetailsInjector
 import com.squareup.picasso.Picasso
 
@@ -20,11 +18,11 @@ interface OtherInfoView {
 
     fun onCreate(savedInstanceState: Bundle?)
     fun displayArtistInfo(artist: OtherInfoUiState)
+
 }
 
-class OtherInfoViewActivity(
-    val presenter: MoreDetailsPresenter
-): AppCompatActivity(), OtherInfoView{
+class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
+    private lateinit var presenter: MoreDetailsPresenter
     private lateinit var urlButton : Button
     private lateinit var artistInfoTextView : TextView
     private lateinit var imageView : ImageView
@@ -33,7 +31,6 @@ class OtherInfoViewActivity(
     private val observer: Observer<OtherInfoUiState> =
         Observer { value -> displayArtistInfo(value)
         }
-
     private fun initObservers() {
         presenter.uiStateObservable.subscribe(observer)
     }
@@ -41,14 +38,14 @@ class OtherInfoViewActivity(
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
         initProperties()
+        presenter = initInjector()
         initObservers()
-        initInjector()
         val artistName = getArtistNameFromIntent()
         presenter.generateArtistInfo(artistName)
     }
 
-    private fun initInjector(){
-        MoreDetailsInjector.init(this)
+    private fun initInjector(): MoreDetailsPresenter {
+        return MoreDetailsInjector.init(this)
     }
 
     private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()

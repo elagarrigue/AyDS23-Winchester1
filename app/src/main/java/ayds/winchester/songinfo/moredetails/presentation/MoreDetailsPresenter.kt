@@ -28,7 +28,7 @@ class MoreDetailsPresenterImpl(
     private fun createUiState(artist: Artist.WikipediaArtist): OtherInfoUiState {
         //val snipet = artistRepository
         val info = format.formatInfoSong(artist) // VER SNIPPET
-        return OtherInfoUiState(info, artist?.wikipediaUrl)
+        return OtherInfoUiState("",info, artist?.wikipediaUrl)
     }
 
 }
