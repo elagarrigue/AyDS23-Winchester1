@@ -14,22 +14,22 @@ class ArtistRepositoryImpl(
     private val wikipediaLocalStorage: WikipediaLocalStorage,
     private val wikipediaTrackService: WikipediaTrackService
 ): ArtistRepository, AppCompatActivity() {
+    override  fun getArtist(artistName: String): Artist.WikipediaArtist{
+        var artist = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
+        if(artist == null){
+            val artistInfo = getArtistInfoFromExternal(artistName)
+            val wikipediaUrl = wikipediaTrackService.getArticleUrl(artistName)
+            artist = Artist.WikipediaArtist(
+                name = artistName,
+                artistInfo = artistInfo,
+                wikipediaUrl = wikipediaUrl,
+                isInDataBase = true
+            )
+            wikipediaLocalStorage.saveArtist(artist)
+        }
 
-    override fun getArtist(artistName: String): Artist.WikipediaArtist {
-        val infoSong = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
-        val artistInfo = infoSong?.let { wikipediaLocalStorage.formatFromDataBase(infoSong) } ?: getArtistInfoFromExternal(artistName)
-        val wikipediaUrl = wikipediaTrackService.getArticleUrl(artistName)
-        val artist = Artist.WikipediaArtist(
-            name = artistName,
-            artistInfo = artistInfo,
-            wikipediaUrl = wikipediaUrl,
-            isInDataBase = true
-        )
-        if (artistInfo != NO_RESULT) wikipediaLocalStorage.saveArtist(artist)
         return artist
     }
-
-
     private fun getArtistInfoFromExternal(artistName: String): String {
         return try {
             wikipediaTrackService.getArtistInfo(artistName)

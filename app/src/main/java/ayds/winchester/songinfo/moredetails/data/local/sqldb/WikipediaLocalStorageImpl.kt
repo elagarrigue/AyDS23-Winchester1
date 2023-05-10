@@ -19,23 +19,44 @@ private const val TABLE_ARTIST_QUERY = "create table $TABLE_ARTIST_NAME ($ID_COL
 private const val DB_NAME = "dictionary.db"
 private const val DB_VERSION = 1
 class WikipediaLocalStorageImpl(context: Context): WikipediaLocalStorage, SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
-    override fun getArtistInfoFromDataBase(artistName: String): String? {
-        return this.getInfo(artistName)
-    }
-    override fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"
-
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             TABLE_ARTIST_QUERY
         )
     }
-
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
+    override fun getArtistInfoFromDataBase(artistName: String): Artist.WikipediaArtist? {
+        return this.getInfo(artistName)
+    }
+    private fun getInfo(artist: String): Artist.WikipediaArtist? = getArtistInfo(makeQuery(artist))
+    private fun makeQuery(artist: String) : Cursor =
+        readableDatabase.query(
+            TABLE_ARTIST_NAME,
+            arrayOf(ID_COLUMN, ARTIST_COLUMN, INFO_COLUMN,WIKIPEDIA_URL_COLUMN),
+            "$ARTIST_COLUMN = ?",
+            arrayOf(artist),
+            null,
+            null,
+            "$ARTIST_COLUMN  DESC"
+        )
+    private fun getArtistInfo(cursor: Cursor) : Artist.WikipediaArtist? =
+        with(cursor) {
+            if (moveToNext()) {
+                Artist.WikipediaArtist(
+                    name=getString(cursor.getColumnIndexOrThrow(ARTIST_COLUMN)),
+                    artistInfo = formatFromDataBase(getString(cursor.getColumnIndexOrThrow(INFO_COLUMN))),
+                    wikipediaUrl = getString(cursor.getColumnIndexOrThrow(WIKIPEDIA_URL_COLUMN)),
+                    isInDataBase = true
+                )
+            } else {
+                null
+            }
+        }
 
+    private fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"
     override fun saveArtist(artist: Artist.WikipediaArtist) {
         writableDatabase.insert(TABLE_ARTIST_NAME, null, getValues(artist))
     }
-
     private fun getValues(artist: Artist.WikipediaArtist): ContentValues {
         val values = ContentValues()
         values.put(ARTIST_COLUMN, artist.name)
@@ -44,30 +65,4 @@ class WikipediaLocalStorageImpl(context: Context): WikipediaLocalStorage, SQLite
         values.put(SOURCE_COLUMN, 1)
         return values
     }
-
-    private fun getInfo(artist: String): String? = getArtistInfo(makeQuery(artist))
-
-    private fun makeQuery(artist: String) : Cursor =
-        readableDatabase.query(
-            TABLE_ARTIST_NAME,
-            arrayOf(ID_COLUMN, ARTIST_COLUMN, INFO_COLUMN),
-            "$ARTIST_COLUMN = ?",
-            arrayOf(artist),
-            null,
-            null,
-            "$ARTIST_COLUMN  DESC"
-        )
-
-    private fun getArtistInfo(cursor: Cursor) : String? {
-        var item: String? = null
-
-        if(cursor.moveToNext()){
-            item = cursor.getString(
-                cursor.getColumnIndexOrThrow(INFO_COLUMN)
-            )
-        }
-        cursor.close()
-        return item
-    }
-
 }

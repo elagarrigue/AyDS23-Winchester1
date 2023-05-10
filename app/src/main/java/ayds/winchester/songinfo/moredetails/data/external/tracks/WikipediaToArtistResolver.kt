@@ -19,31 +19,26 @@ interface WikipediaToArtistResolver {
     fun getArticleUrl(artistName: String, callResponse: Response<String>): String
 }
 internal class WikipediaToArtistResolverImpl(private val format: InfoSongFormat) : WikipediaToArtistResolver {
-
-        override fun getArtistInfo(artistName: String, callResponse: Response<String>): String {
+    override fun getArtistInfo(artistName: String, callResponse: Response<String>): String {
         val query = getQuery(callResponse)
         val snippet = getSnippet(query)
         return resolveInfoSong(snippet, artistName)
     }
-
     private fun getQuery(callResponse: Response<String>): JsonObject? {
         val gson = Gson()
         val jsonObject = fromJsonToJsonObject(gson, callResponse)
         val query = jsonObject?.get(QUERY)
         return query?.asJsonObject
     }
-
     private fun fromJsonToJsonObject(gson: Gson, callResponse: Response<String>): JsonObject? {
         return gson.fromJson(callResponse.body(), JsonObject::class.java)
     }
-
     private fun getSnippet(query: JsonObject?): JsonElement? {
         val searchArray = query?.get(SEARCH)?.asJsonArray
         val firstSearchResult = searchArray?.get(0)
         val firstSearchResultObj =  firstSearchResult?.asJsonObject
         return firstSearchResultObj?.get(SNIPPET)
     }
-
     private fun resolveInfoSong(snippet: JsonElement?, artistName: String): String{
         val infoSong = snippet?.let {
             val infoSong = format.formatInfoSong(snippet,artistName)
@@ -51,13 +46,11 @@ internal class WikipediaToArtistResolverImpl(private val format: InfoSongFormat)
         } ?: NO_RESULT
         return infoSong
     }
-
     override fun getArticleUrl(artistName: String, callResponse: Response<String>): String {
         val query = getQuery(callResponse)
         val pageId = getPageId(query)
         return "$WIKIPEDIA_ARTICLE_URL$pageId"
     }
-
     private fun getPageId(query: JsonObject?): JsonElement? {
         val searchArray = query?.get(SEARCH)?.asJsonArray
         val firstResult = searchArray?.get(0)

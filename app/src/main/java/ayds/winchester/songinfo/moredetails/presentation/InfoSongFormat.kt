@@ -15,7 +15,6 @@ interface InfoSongFormat{
     fun formatInfoSong(snippet: JsonElement, artistName: String): String
 }
 class InfoSongFormatImpl() : InfoSongFormat {
-
     override fun formatInfoSong(artist: Artist.WikipediaArtist): String {
         return when(artist){
             is Artist.WikipediaArtist ->
@@ -23,13 +22,11 @@ class InfoSongFormatImpl() : InfoSongFormat {
             else -> NO_RESULT
         }
     }
-
     override fun formatInfoSong(snippet: JsonElement, artistName: String): String {
         var infoSong = snippet.asString.replace("\\n", "\n")
         infoSong = textToHtml(infoSong, artistName)
         return infoSong
     }
-
     private fun textToHtml(text: String, term: String?): String {
         val text = text.replace("\\n", "\n")
         val builder = StringBuilder()

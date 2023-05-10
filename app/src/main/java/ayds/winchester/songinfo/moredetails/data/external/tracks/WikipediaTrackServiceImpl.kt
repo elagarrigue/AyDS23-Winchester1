@@ -16,7 +16,6 @@ internal class WikipediaTrackServiceImpl(
         val callResponse = getArtistInfoFromService(artistName)
         return wikipediaToArtistResolver.getArticleUrl(artistName, callResponse)
     }
-
     override fun getArtistInfo(artistName: String): String{
         val callResponse = getArtistInfoFromService(artistName)
         return wikipediaToArtistResolver.getArtistInfo(artistName, callResponse)

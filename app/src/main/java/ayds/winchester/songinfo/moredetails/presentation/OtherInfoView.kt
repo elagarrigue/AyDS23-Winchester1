@@ -31,9 +31,11 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
     private val observer: Observer<OtherInfoUiState> =
         Observer { value -> displayArtistInfo(value)
         }
+
     private fun initObservers() {
         presenter.uiStateObservable.subscribe(observer)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_info)
@@ -44,26 +46,26 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         presenter.generateArtistInfo(artistName)
     }
 
+    private fun initProperties(){
+        urlButton = findViewById(R.id.openUrlButton)
+        artistInfoTextView = findViewById(R.id.textPane2)
+        imageView = findViewById(R.id.imageView)
+    }
+
     private fun initInjector() {
         MoreDetailsInjector.init(this)
     }
+
+    private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
 
     override fun setPresenter(presenterInj: MoreDetailsPresenter) {
         this.presenter = presenterInj
     }
 
-    private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
-
     override fun displayArtistInfo(artist: OtherInfoUiState) {
         loadImage(WIKIPEDIA_LOGO)
         setText(artist.artistInfo)
         setListener(artist.wikipediaArticleUrl)
-    }
-
-    private fun initProperties(){
-        urlButton = findViewById(R.id.openUrlButton)
-        artistInfoTextView = findViewById(R.id.textPane2)
-        imageView = findViewById(R.id.imageView)
     }
 
     private fun loadImage(imageUrl: String) {

@@ -21,13 +21,10 @@ class MoreDetailsPresenterImpl(
             val artist = artistRepository.getArtist(artistName)
             val uiState = createUiState(artist)
             uiStateSubject.notify(uiState)
-            //displayArtistInfo(artist)
         }.start()
     }
-
     private fun createUiState(artist: Artist.WikipediaArtist): OtherInfoUiState {
-        //val snipet = artistRepository
-        val info = format.formatInfoSong(artist) // VER SNIPPET
+        val info = format.formatInfoSong(artist)
         return OtherInfoUiState("",info, artist?.wikipediaUrl)
     }
 
