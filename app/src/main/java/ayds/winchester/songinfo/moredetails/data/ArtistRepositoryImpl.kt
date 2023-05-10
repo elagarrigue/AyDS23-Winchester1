@@ -19,21 +19,21 @@ class ArtistRepositoryImpl(
         val infoSong = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
         val artistInfo = infoSong?.let { wikipediaLocalStorage.formatFromDataBase(infoSong) } ?: getArtistInfoFromExternal(artistName)
         val wikipediaUrl = wikipediaTrackService.getArticleUrl(artistName)
-        return Artist.WikipediaArtist(
+        val artist = Artist.WikipediaArtist(
             name = artistName,
             artistInfo = artistInfo,
             wikipediaUrl = wikipediaUrl,
             isInDataBase = true
         )
+        if (artistInfo != NO_RESULT) wikipediaLocalStorage.saveArtist(artist)
+        return artist
     }
 
 
     private fun getArtistInfoFromExternal(artistName: String): String {
-        var artistInfo = try {
+        return try {
             wikipediaTrackService.getArtistInfo(artistName)
         } catch (e1: IOException){""}
-        if (artistInfo != NO_RESULT) wikipediaLocalStorage.saveArtist(artistName, artistInfo) // En getArtist
-        return artistInfo
     }
 
 

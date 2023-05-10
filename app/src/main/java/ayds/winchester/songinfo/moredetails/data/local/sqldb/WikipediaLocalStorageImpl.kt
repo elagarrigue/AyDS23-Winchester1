@@ -6,14 +6,16 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
+import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 
 private const val PREFIX_DATABASE = "[*]"
 private const val ID_COLUMN = "id"
 private const val ARTIST_COLUMN = "artist"
 private const val INFO_COLUMN = "info"
 private const val SOURCE_COLUMN = "source"
+private const val WIKIPEDIA_URL_COLUMN = "url"
 private const val TABLE_ARTIST_NAME = "artists"
-private const val TABLE_ARTIST_QUERY = "create table $TABLE_ARTIST_NAME ($ID_COLUMN INTEGER PRIMARY KEY AUTOINCREMENT, $ARTIST_COLUMN string, $INFO_COLUMN string, $SOURCE_COLUMN integer)"
+private const val TABLE_ARTIST_QUERY = "create table $TABLE_ARTIST_NAME ($ID_COLUMN INTEGER PRIMARY KEY AUTOINCREMENT, $ARTIST_COLUMN string, $INFO_COLUMN string, $WIKIPEDIA_URL_COLUMN string, $SOURCE_COLUMN integer)"
 private const val DB_NAME = "dictionary.db"
 private const val DB_VERSION = 1
 class WikipediaLocalStorageImpl(context: Context): WikipediaLocalStorage, SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
@@ -30,14 +32,15 @@ class WikipediaLocalStorageImpl(context: Context): WikipediaLocalStorage, SQLite
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    override fun saveArtist(artist: String?, info: String?) {
-        writableDatabase.insert(TABLE_ARTIST_NAME, null, getValues(artist, info))
+    override fun saveArtist(artist: Artist.WikipediaArtist) {
+        writableDatabase.insert(TABLE_ARTIST_NAME, null, getValues(artist))
     }
 
-    private fun getValues(artist: String?, info: String?) : ContentValues {
+    private fun getValues(artist: Artist.WikipediaArtist): ContentValues {
         val values = ContentValues()
-        values.put(ARTIST_COLUMN, artist)
-        values.put(INFO_COLUMN, info)
+        values.put(ARTIST_COLUMN, artist.name)
+        values.put(INFO_COLUMN, artist.artistInfo)
+        values.put(WIKIPEDIA_URL_COLUMN, artist.wikipediaUrl)
         values.put(SOURCE_COLUMN, 1)
         return values
     }

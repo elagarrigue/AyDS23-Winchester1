@@ -18,11 +18,9 @@ interface WikipediaToArtistResolver {
     fun getArtistInfo(artistName: String, callResponse: Response<String>): String
     fun getArticleUrl(artistName: String, callResponse: Response<String>): String
 }
-internal class WikipediaToArtistResolverImpl(val format: InfoSongFormat) : WikipediaToArtistResolver {
+internal class WikipediaToArtistResolverImpl(private val format: InfoSongFormat) : WikipediaToArtistResolver {
 
-    //private val format: InfoSongFormat = InfoSongFormatImpl() //con injector
-
-    override fun getArtistInfo(artistName: String, callResponse: Response<String>): String {
+        override fun getArtistInfo(artistName: String, callResponse: Response<String>): String {
         val query = getQuery(callResponse)
         val snippet = getSnippet(query)
         return resolveInfoSong(snippet, artistName)

@@ -27,7 +27,6 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
     private lateinit var urlButton : Button
     private lateinit var artistInfoTextView : TextView
     private lateinit var imageView : ImageView
-    //private lateinit var dataBase: DataBase // VER DONDE PONER ESTO
 
     private val observer: Observer<OtherInfoUiState> =
         Observer { value -> displayArtistInfo(value)
@@ -65,7 +64,6 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         urlButton = findViewById(R.id.openUrlButton)
         artistInfoTextView = findViewById(R.id.textPane2)
         imageView = findViewById(R.id.imageView)
-        //dataBase = DataBase(this) //VER DONDE PONER ESTO
     }
 
     private fun loadImage(imageUrl: String) {
