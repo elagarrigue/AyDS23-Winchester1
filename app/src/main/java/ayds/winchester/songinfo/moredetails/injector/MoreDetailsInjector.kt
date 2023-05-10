@@ -21,19 +21,20 @@ object MoreDetailsInjector {
     private lateinit var presenter : MoreDetailsPresenter
 
     fun init(otherInfoView: OtherInfoView){
-        initRepository(otherInfoView)
-        initPresenter(otherInfoView)
+        val format : InfoSongFormat = InfoSongFormatImpl()
+        initRepository(otherInfoView, format)
+        initPresenter(otherInfoView, format)
     }
 
-    private fun initRepository(otherInfoView: OtherInfoView){
+    private fun initRepository(otherInfoView: OtherInfoView, format : InfoSongFormat){
         val wikipediaLocalStorage: WikipediaLocalStorage = WikipediaLocalStorageImpl(otherInfoView as Context)
-        val wikipediaTrackService: WikipediaTrackService = generateWikipediaTrackService()
+        val wikipediaTrackService: WikipediaTrackService = generateWikipediaTrackService(format)
         this.artistRepository = ArtistRepositoryImpl(wikipediaLocalStorage,wikipediaTrackService)
     }
 
-    private fun generateWikipediaTrackService(): WikipediaTrackService{
+    private fun generateWikipediaTrackService(format : InfoSongFormat): WikipediaTrackService{
         val wikipediaAPI = createWikipediaAPI()
-        val wikipediaToArtistResolver : WikipediaToArtistResolver = WikipediaToArtistResolverImpl()
+        val wikipediaToArtistResolver : WikipediaToArtistResolver = WikipediaToArtistResolverImpl(format)
         return WikipediaTrackServiceImpl(wikipediaAPI,wikipediaToArtistResolver)
     }
 
@@ -45,8 +46,7 @@ object MoreDetailsInjector {
     private fun createRetrofit() = Retrofit.Builder().baseUrl(WIKIPEDIA_BASE_URL).addConverterFactory(
         ScalarsConverterFactory.create()).build()
 
-    private fun initPresenter(otherInfoView: OtherInfoView){
-        val format : InfoSongFormat = InfoSongFormatImpl()
+    private fun initPresenter(otherInfoView: OtherInfoView, format : InfoSongFormat){
         this.presenter = MoreDetailsPresenterImpl(artistRepository,format)
         otherInfoView.setPresenter(this.presenter)
     }

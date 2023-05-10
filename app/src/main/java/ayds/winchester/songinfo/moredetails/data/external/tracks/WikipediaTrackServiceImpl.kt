@@ -5,8 +5,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
-private const val WIKIPEDIA_BASE_URL = "https://en.wikipedia.org/w/"
-class WikipediaTrackServiceImpl(
+internal class WikipediaTrackServiceImpl(
     private val wikipediaAPI : WikipediaAPI,
     private val wikipediaToArtistResolver : WikipediaToArtistResolver,
 ): WikipediaTrackService {

@@ -17,7 +17,7 @@ class ArtistRepositoryImpl(
 
     override fun getArtist(artistName: String): Artist.WikipediaArtist {
         val infoSong = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
-        val artistInfo = infoSong?.let { wikipediaLocalStorage.formatFromDataBase(infoSong) } ?: getArtistInfoFromRepository(artistName)
+        val artistInfo = infoSong?.let { wikipediaLocalStorage.formatFromDataBase(infoSong) } ?: getArtistInfoFromExternal(artistName)
         val wikipediaUrl = wikipediaTrackService.getArticleUrl(artistName)
         return Artist.WikipediaArtist(
             name = artistName,
@@ -28,11 +28,11 @@ class ArtistRepositoryImpl(
     }
 
 
-    private fun getArtistInfoFromRepository(artistName: String): String {
+    private fun getArtistInfoFromExternal(artistName: String): String {
         var artistInfo = try {
             wikipediaTrackService.getArtistInfo(artistName)
         } catch (e1: IOException){""}
-        if (artistInfo != NO_RESULT) wikipediaLocalStorage.saveArtist(artistName, artistInfo)
+        if (artistInfo != NO_RESULT) wikipediaLocalStorage.saveArtist(artistName, artistInfo) // En getArtist
         return artistInfo
     }
 
