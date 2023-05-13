@@ -13,7 +13,6 @@ import ayds.winchester.songinfo.R
 import ayds.winchester.songinfo.moredetails.injector.MoreDetailsInjector
 import com.squareup.picasso.Picasso
 
-private const val WIKIPEDIA_LOGO = "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png"
 interface OtherInfoView {
 
     fun onCreate(savedInstanceState: Bundle?)
@@ -63,7 +62,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
     }
 
     override fun displayArtistInfo(artist: OtherInfoUiState) {
-        loadImage(WIKIPEDIA_LOGO)
+        loadImage(artist.wikipediaLogo)
         setText(artist.artistInfo)
         setListener(artist.wikipediaArticleUrl)
     }
