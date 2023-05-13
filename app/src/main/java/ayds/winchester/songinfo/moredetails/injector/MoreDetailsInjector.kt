@@ -2,11 +2,11 @@ package ayds.winchester.songinfo.moredetails.injector
 
 import android.content.Context
 import ayds.winchester.songinfo.moredetails.data.ArtistRepositoryImpl
-import ayds.winchester.songinfo.moredetails.data.external.WikipediaTrackService
-import ayds.winchester.songinfo.moredetails.data.external.tracks.WikipediaAPI
-import ayds.winchester.songinfo.moredetails.data.external.tracks.WikipediaToArtistResolver
-import ayds.winchester.songinfo.moredetails.data.external.tracks.WikipediaToArtistResolverImpl
-import ayds.winchester.songinfo.moredetails.data.external.tracks.WikipediaTrackServiceImpl
+import ayds.winchester.songinfo.moredetails.data.external.WikipediaArticleService
+import ayds.winchester.songinfo.moredetails.data.external.article.WikipediaAPI
+import ayds.winchester.songinfo.moredetails.data.external.article.WikipediaToArtistResolver
+import ayds.winchester.songinfo.moredetails.data.external.article.WikipediaToArtistResolverImpl
+import ayds.winchester.songinfo.moredetails.data.external.article.WikipediaArticleServiceImpl
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
 import ayds.winchester.songinfo.moredetails.data.local.sqldb.WikipediaLocalStorageImpl
 import ayds.winchester.songinfo.moredetails.domain.ArtistRepository
@@ -27,13 +27,13 @@ object MoreDetailsInjector {
     }
     private fun initRepository(otherInfoView: OtherInfoView, format : InfoSongFormat){
         val wikipediaLocalStorage: WikipediaLocalStorage = WikipediaLocalStorageImpl(otherInfoView as Context)
-        val wikipediaTrackService: WikipediaTrackService = generateWikipediaTrackService(format)
-        this.artistRepository = ArtistRepositoryImpl(wikipediaLocalStorage,wikipediaTrackService)
+        val wikipediaArticleService: WikipediaArticleService = generateWikipediaTrackService(format)
+        this.artistRepository = ArtistRepositoryImpl(wikipediaLocalStorage,wikipediaArticleService)
     }
-    private fun generateWikipediaTrackService(format : InfoSongFormat): WikipediaTrackService{
+    private fun generateWikipediaTrackService(format : InfoSongFormat): WikipediaArticleService{
         val wikipediaAPI = createWikipediaAPI()
         val wikipediaToArtistResolver : WikipediaToArtistResolver = WikipediaToArtistResolverImpl(format)
-        return WikipediaTrackServiceImpl(wikipediaAPI,wikipediaToArtistResolver)
+        return WikipediaArticleServiceImpl(wikipediaAPI,wikipediaToArtistResolver)
     }
     private fun createWikipediaAPI(): WikipediaAPI {
         val retrofit = createRetrofit()

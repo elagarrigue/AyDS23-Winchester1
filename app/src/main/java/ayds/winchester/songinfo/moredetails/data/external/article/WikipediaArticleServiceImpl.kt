@@ -1,14 +1,12 @@
-package ayds.winchester.songinfo.moredetails.data.external.tracks
+package ayds.winchester.songinfo.moredetails.data.external.article
 
-import ayds.winchester.songinfo.moredetails.data.external.WikipediaTrackService
+import ayds.winchester.songinfo.moredetails.data.external.WikipediaArticleService
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
-internal class WikipediaTrackServiceImpl(
+internal class WikipediaArticleServiceImpl(
     private val wikipediaAPI : WikipediaAPI,
     private val wikipediaToArtistResolver : WikipediaToArtistResolver,
-): WikipediaTrackService {
+): WikipediaArticleService {
     override fun getArtistInfoFromService(artistName: String): Response<String> {
         return wikipediaAPI.getArtistInfo(artistName).execute()
     }

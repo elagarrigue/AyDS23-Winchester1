@@ -1,4 +1,4 @@
-package ayds.winchester.songinfo.moredetails.data.external.tracks;
+package ayds.winchester.songinfo.moredetails.data.external.article;
 
 
 import retrofit2.Call;

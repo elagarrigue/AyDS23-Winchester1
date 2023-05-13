@@ -1,7 +1,6 @@
-package ayds.winchester.songinfo.moredetails.data.external.tracks
+package ayds.winchester.songinfo.moredetails.data.external.article
 
 import ayds.winchester.songinfo.moredetails.presentation.InfoSongFormat
-import ayds.winchester.songinfo.moredetails.presentation.InfoSongFormatImpl
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
