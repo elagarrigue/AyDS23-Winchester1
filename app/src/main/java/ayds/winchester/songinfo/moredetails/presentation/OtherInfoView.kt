@@ -18,7 +18,7 @@ interface OtherInfoView {
 
     fun onCreate(savedInstanceState: Bundle?)
     fun displayArtistInfo(artist: OtherInfoUiState)
-    fun setPresenter(presenterInj: MoreDetailsPresenter)
+    fun setPresenter(presenter: MoreDetailsPresenter)
 
 }
 
@@ -58,8 +58,8 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
 
     private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
 
-    override fun setPresenter(presenterInj: MoreDetailsPresenter) {
-        this.presenter = presenterInj
+    override fun setPresenter(presenter: MoreDetailsPresenter) {
+        this.presenter = presenter
     }
 
     override fun displayArtistInfo(artist: OtherInfoUiState) {
