@@ -33,7 +33,7 @@ class ArtistRepositoryImpl(
     private fun getArtistInfoFromExternal(artistName: String): String {
         return try {
             wikipediaTrackService.getArtistInfo(artistName)
-        } catch (e1: IOException){""}
+        } catch (e1: IOException){"Empty Artist"}
     }
 
 
