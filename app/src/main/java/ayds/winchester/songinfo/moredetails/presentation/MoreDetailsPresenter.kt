@@ -9,7 +9,7 @@ interface MoreDetailsPresenter{
     val uiStateObservable: Observable<OtherInfoUiState>
     fun generateArtistInfo(artistName: String)
 }
-class MoreDetailsPresenterImpl(
+internal class MoreDetailsPresenterImpl(
     private val artistRepository: ArtistRepository,
     private val format: InfoSongFormat,
 ) : MoreDetailsPresenter {
