@@ -11,7 +11,7 @@ interface MoreDetailsPresenter{
 }
 internal class MoreDetailsPresenterImpl(
     private val artistRepository: ArtistRepository,
-    private val format: InfoSongFormat,
+    private val infoSongFormat: InfoSongFormat,
 ) : MoreDetailsPresenter {
 
     private val uiStateSubject = Subject<OtherInfoUiState>()
