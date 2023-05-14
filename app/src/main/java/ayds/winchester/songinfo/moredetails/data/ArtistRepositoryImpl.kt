@@ -13,7 +13,7 @@ class ArtistRepositoryImpl(
     private val wikipediaLocalStorage: WikipediaLocalStorage,
     private val wikipediaArticleService: WikipediaArticleService
 ): ArtistRepository, AppCompatActivity() {
-    override  fun getArtist(artistName: String): Artist.WikipediaArtist{
+    override  fun getArtist(artistName: String): Artist {
         var artist = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
         if(artist == null){
             val artistInfo = getArtistInfoFromExternal(artistName)
