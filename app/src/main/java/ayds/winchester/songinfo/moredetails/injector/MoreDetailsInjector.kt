@@ -8,6 +8,8 @@ import ayds.winchester.songinfo.moredetails.data.external.article.WikipediaToArt
 import ayds.winchester.songinfo.moredetails.data.external.article.WikipediaToArtistResolverImpl
 import ayds.winchester.songinfo.moredetails.data.external.article.WikipediaArticleServiceImpl
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
+import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToWikipediaArtistMapper
+import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToWikipediaArtistMapperImpl
 import ayds.winchester.songinfo.moredetails.data.local.sqldb.WikipediaLocalStorageImpl
 import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import ayds.winchester.songinfo.moredetails.presentation.*
@@ -26,9 +28,14 @@ object MoreDetailsInjector {
         initPresenter(otherInfoView, format)
     }
     private fun initRepository(otherInfoView: OtherInfoView, format : InfoSongFormat){
-        val wikipediaLocalStorage: WikipediaLocalStorage = WikipediaLocalStorageImpl(otherInfoView as Context)
+        val wikipediaLocalStorage: WikipediaLocalStorage = generateWikipediaLocalStorage(otherInfoView)
         val wikipediaArticleService: WikipediaArticleService = generateWikipediaTrackService(format)
         this.artistRepository = ArtistRepositoryImpl(wikipediaLocalStorage,wikipediaArticleService)
+    }
+
+    private fun generateWikipediaLocalStorage(otherInfoView: OtherInfoView): WikipediaLocalStorage {
+        val cursor : CursorToWikipediaArtistMapper = CursorToWikipediaArtistMapperImpl()
+        return WikipediaLocalStorageImpl(otherInfoView as Context, cursor)
     }
     private fun generateWikipediaTrackService(format : InfoSongFormat): WikipediaArticleService{
         val wikipediaAPI = createWikipediaAPI()

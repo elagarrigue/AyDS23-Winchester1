@@ -8,10 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
 import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 
-private const val PREFIX_DATABASE = "[*]"
 private const val DB_NAME = "dictionary.db"
 private const val DB_VERSION = 1
-class WikipediaLocalStorageImpl(context: Context): WikipediaLocalStorage, SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+class WikipediaLocalStorageImpl(context: Context, private val cursorToWikipediaArtistMapper: CursorToWikipediaArtistMapper,): WikipediaLocalStorage, SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     private val projection = arrayOf(
         ID_COLUMN,
@@ -28,8 +27,12 @@ class WikipediaLocalStorageImpl(context: Context): WikipediaLocalStorage, SQLite
     override fun getArtistInfoFromDataBase(artistName: String): Artist.WikipediaArtist? {
         return this.getInfo(artistName)
     }
-    private fun getInfo(artist: String): Artist.WikipediaArtist? = getArtistInfo(makeQuery(artist))
-    private fun makeQuery(artist: String) : Cursor =
+    private fun getInfo(artist: String): Artist.WikipediaArtist? = getArtistInfo(getArtistCursor(artist))
+
+    private fun getArtistInfo(cursor: Cursor) : Artist.WikipediaArtist? {
+        return cursorToWikipediaArtistMapper.map(cursor)
+    }
+    private fun getArtistCursor(artist: String) : Cursor =
         readableDatabase.query(
             TABLE_ARTIST_NAME,
             arrayOf(ID_COLUMN, ARTIST_COLUMN, INFO_COLUMN,WIKIPEDIA_URL_COLUMN),
@@ -39,21 +42,6 @@ class WikipediaLocalStorageImpl(context: Context): WikipediaLocalStorage, SQLite
             null,
             "$ARTIST_COLUMN  DESC"
         )
-    private fun getArtistInfo(cursor: Cursor) : Artist.WikipediaArtist? =
-        with(cursor) {
-            if (moveToNext()) {
-                Artist.WikipediaArtist(
-                    name=getString(cursor.getColumnIndexOrThrow(ARTIST_COLUMN)),
-                    artistInfo = formatFromDataBase(getString(cursor.getColumnIndexOrThrow(INFO_COLUMN))),
-                    wikipediaUrl = getString(cursor.getColumnIndexOrThrow(WIKIPEDIA_URL_COLUMN)),
-                    isInDataBase = true
-                )
-            } else {
-                null
-            }
-        }
-
-    private fun formatFromDataBase(infoSong: String) = "$PREFIX_DATABASE$infoSong"
     override fun saveArtist(artist: Artist.WikipediaArtist) {
         writableDatabase.insert(TABLE_ARTIST_NAME, null, getValues(artist))
     }
