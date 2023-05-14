@@ -29,9 +29,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         Observer { value -> displayArtistInfo(value)
         }
 
-    private fun initObservers() {
-        presenter.uiStateObservable.subscribe(observer)
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +37,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         initProperties()
         initInjector()
         initObservers()
-        val artistName = getArtistNameFromIntent()
-        presenter.generateArtistInfo(artistName)
+        generateArtistInfo()
     }
 
     private fun initProperties(){
@@ -51,6 +48,15 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
 
     private fun initInjector() {
         MoreDetailsInjector.init(this)
+    }
+
+    private fun initObservers() {
+        presenter.uiStateObservable.subscribe(observer)
+    }
+
+    private fun generateArtistInfo() {
+        val artistName = getArtistNameFromIntent()
+        presenter.generateArtistInfo(artistName)
     }
 
     private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
