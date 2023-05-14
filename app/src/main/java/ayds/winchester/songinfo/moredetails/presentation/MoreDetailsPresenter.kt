@@ -25,7 +25,7 @@ internal class MoreDetailsPresenterImpl(
     }
     private fun createUiState(artist: Artist.WikipediaArtist): OtherInfoUiState {
         val info = infoSongFormat.formatInfoSong(artist)
-        return OtherInfoUiState("",info, artist.wikipediaUrl)
+        return OtherInfoUiState(artistInfo = info, wikipediaArticleUrl = artist.wikipediaUrl)
     }
 
 }

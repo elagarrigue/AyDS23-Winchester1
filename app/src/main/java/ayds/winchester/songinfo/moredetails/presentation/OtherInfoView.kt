@@ -15,8 +15,6 @@ import com.squareup.picasso.Picasso
 
 interface OtherInfoView {
 
-    fun onCreate(savedInstanceState: Bundle?)
-    fun displayArtistInfo(artist: OtherInfoUiState)
     fun setPresenter(presenter: MoreDetailsPresenter)
 
 }
@@ -61,7 +59,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         this.presenter = presenter
     }
 
-    override fun displayArtistInfo(artist: OtherInfoUiState) {
+    private fun displayArtistInfo(artist: OtherInfoUiState) {
         loadImage(artist.wikipediaLogo)
         setText(artist.artistInfo)
         setListener(artist.wikipediaArticleUrl)
