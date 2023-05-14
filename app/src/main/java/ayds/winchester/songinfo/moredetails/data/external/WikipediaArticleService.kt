@@ -1,9 +1,8 @@
 package ayds.winchester.songinfo.moredetails.data.external
 
+import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 import retrofit2.Response
 
 interface WikipediaArticleService {
-    fun getArticleUrl(artistName: String): String
-    fun getArtistInfoFromService(artistName: String): Response<String>
-    fun getArtistInfo(artistName: String): String
+    fun getArtist(artistName: String): Artist
 }

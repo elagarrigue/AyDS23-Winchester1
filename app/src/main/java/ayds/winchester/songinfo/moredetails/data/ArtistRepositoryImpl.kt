@@ -14,26 +14,13 @@ class ArtistRepositoryImpl(
     private val wikipediaArticleService: WikipediaArticleService
 ): ArtistRepository, AppCompatActivity() {
     override  fun getArtist(artistName: String): Artist {
-        var artist = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
+        var artist : Artist? = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
         if(artist == null){
-            val artistInfo = getArtistInfoFromExternal(artistName)
-            val wikipediaUrl = wikipediaArticleService.getArticleUrl(artistName)
-            artist = Artist.WikipediaArtist(
-                name = artistName,
-                artistInfo = artistInfo,
-                wikipediaUrl = wikipediaUrl,
-                isInDataBase = true
-            )
-            wikipediaLocalStorage.saveArtist(artist)
+            artist = wikipediaArticleService.getArtist(artistName)
+            wikipediaLocalStorage.saveArtist(artist as Artist.WikipediaArtist)
         }
 
         return artist
     }
-    private fun getArtistInfoFromExternal(artistName: String): String {
-        return try {
-            wikipediaArticleService.getArtistInfo(artistName)
-        } catch (e1: IOException){"Empty Artist"}
-    }
-
 
 }
