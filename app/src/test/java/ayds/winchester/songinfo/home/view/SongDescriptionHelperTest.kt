@@ -30,7 +30,7 @@ class SongDescriptionHelperTest {
             "Song: Plush [*]\n" +
                     "Artist: Stone Temple Pilots\n" +
                     "Album: Core\n" +
-                    "Year: 1992"
+                    "Release Date: 01/01/1992\n"
 
         Assert.assertEquals(expected, result)
     }
@@ -46,7 +46,7 @@ class SongDescriptionHelperTest {
             "day",
             "url",
             "url",
-            true,
+            false,
         )
 
         val result = songDescriptionHelper.getSongDescriptionText(song)
@@ -55,7 +55,7 @@ class SongDescriptionHelperTest {
             "Song: Plush \n" +
                     "Artist: Stone Temple Pilots\n" +
                     "Album: Core\n" +
-                    "Year: 1992"
+                    "Release Date: 01/01/1992\n"
 
         Assert.assertEquals(expected, result)
     }
