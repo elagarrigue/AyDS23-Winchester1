@@ -9,7 +9,7 @@ import ayds.winchester.songinfo.moredetails.data.external.article.WikipediaToArt
 import ayds.winchester.songinfo.moredetails.data.external.article.WikipediaArticleServiceImpl
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
 import ayds.winchester.songinfo.moredetails.data.local.sqldb.WikipediaLocalStorageImpl
-import ayds.winchester.songinfo.moredetails.domain.ArtistRepository
+import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import ayds.winchester.songinfo.moredetails.presentation.*
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory

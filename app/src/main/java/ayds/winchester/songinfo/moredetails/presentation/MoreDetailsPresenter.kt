@@ -2,7 +2,7 @@ package ayds.winchester.songinfo.moredetails.presentation
 
 import ayds.observer.Observable
 import ayds.observer.Subject
-import ayds.winchester.songinfo.moredetails.domain.ArtistRepository
+import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 
 interface MoreDetailsPresenter{

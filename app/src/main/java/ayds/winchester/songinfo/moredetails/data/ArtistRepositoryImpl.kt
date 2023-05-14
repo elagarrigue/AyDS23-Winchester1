@@ -2,7 +2,7 @@ package ayds.winchester.songinfo.moredetails.data
 
 import ayds.winchester.songinfo.moredetails.data.external.WikipediaArticleService
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
-import ayds.winchester.songinfo.moredetails.domain.ArtistRepository
+import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 import java.io.IOException
 import androidx.appcompat.app.AppCompatActivity
