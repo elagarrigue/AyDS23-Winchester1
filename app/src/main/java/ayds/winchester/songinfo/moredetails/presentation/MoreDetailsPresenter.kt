@@ -19,9 +19,13 @@ internal class MoreDetailsPresenterImpl(
     override fun generateArtistInfo(artistName: String) {
         Thread {
             val artist = artistRepository.getArtist(artistName)
-            val uiState = createUiState(artist)
-            uiStateSubject.notify(uiState)
+            notifyUiState(artist)
         }.start()
+    }
+
+    private fun notifyUiState(artist: Artist.WikipediaArtist) {
+        val uiState = createUiState(artist)
+        uiStateSubject.notify(uiState)
     }
     private fun createUiState(artist: Artist.WikipediaArtist): OtherInfoUiState {
         val info = infoSongFormat.formatInfoSong(artist)
