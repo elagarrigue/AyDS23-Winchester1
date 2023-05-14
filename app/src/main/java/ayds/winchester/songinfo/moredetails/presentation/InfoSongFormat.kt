@@ -11,11 +11,11 @@ private const val PREFIX_DATABASE = "[*]"
 private const val NO_RESULT = "No Results"
 
 interface InfoSongFormat{
-    fun formatInfoSong(artist: Artist.WikipediaArtist): String
+    fun formatInfoSong(artist: Artist): String
     fun formatInfoSong(snippet: JsonElement, artistName: String): String
 }
 class InfoSongFormatImpl() : InfoSongFormat {
-    override fun formatInfoSong(artist: Artist.WikipediaArtist): String {
+    override fun formatInfoSong(artist: Artist): String {
         return when(artist){
             is Artist.WikipediaArtist ->
                 textToHtml(artist.artistInfo, artist.name)
