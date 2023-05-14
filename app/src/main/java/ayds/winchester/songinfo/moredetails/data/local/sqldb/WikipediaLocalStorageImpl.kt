@@ -9,19 +9,19 @@ import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
 import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 
 private const val PREFIX_DATABASE = "[*]"
-private const val ID_COLUMN = "id"
-private const val ARTIST_COLUMN = "artist"
-private const val INFO_COLUMN = "info"
-private const val SOURCE_COLUMN = "source"
-private const val WIKIPEDIA_URL_COLUMN = "url"
-private const val TABLE_ARTIST_NAME = "artists"
-private const val TABLE_ARTIST_QUERY = "create table $TABLE_ARTIST_NAME ($ID_COLUMN INTEGER PRIMARY KEY AUTOINCREMENT, $ARTIST_COLUMN string, $INFO_COLUMN string, $WIKIPEDIA_URL_COLUMN string, $SOURCE_COLUMN integer)"
 private const val DB_NAME = "dictionary.db"
 private const val DB_VERSION = 1
 class WikipediaLocalStorageImpl(context: Context): WikipediaLocalStorage, SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+
+    private val projection = arrayOf(
+        ID_COLUMN,
+        ARTIST_COLUMN,
+        INFO_COLUMN,
+        WIKIPEDIA_URL_COLUMN,
+        SOURCE_COLUMN)
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
-            TABLE_ARTIST_QUERY
+            createArtistTableQuery
         )
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}

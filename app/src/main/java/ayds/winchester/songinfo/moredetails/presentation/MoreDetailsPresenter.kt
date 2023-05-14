@@ -23,13 +23,17 @@ internal class MoreDetailsPresenterImpl(
         }.start()
     }
 
-    private fun notifyUiState(artist: Artist.WikipediaArtist) {
+    private fun notifyUiState(artist: Artist) {
         val uiState = createUiState(artist)
         uiStateSubject.notify(uiState)
     }
-    private fun createUiState(artist: Artist.WikipediaArtist): OtherInfoUiState {
-        val info = infoSongFormat.formatInfoSong(artist)
-        return OtherInfoUiState(artistInfo = info, wikipediaArticleUrl = artist.wikipediaUrl)
+    private fun createUiState(artist: Artist): OtherInfoUiState {
+        return when(artist){
+            is Artist.WikipediaArtist -> {val info = infoSongFormat.formatInfoSong(artist)
+                OtherInfoUiState(artistInfo = info, wikipediaArticleUrl = artist.wikipediaUrl)
+            }
+            else -> OtherInfoUiState()
+        }
     }
 
 }
