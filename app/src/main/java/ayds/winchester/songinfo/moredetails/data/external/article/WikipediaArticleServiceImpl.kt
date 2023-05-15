@@ -9,13 +9,13 @@ internal class WikipediaArticleServiceImpl(
     private val wikipediaToArtistResolver : WikipediaToArtistResolver,
 ): WikipediaArticleService {
 
-    override fun getArtist(artistName: String): Artist {
+    override fun getArtist(artistName: String): Artist.WikipediaArtist {
         val callResponse = getArtistInfoFromService(artistName)
         return Artist.WikipediaArtist(
             name = artistName,
             artistInfo = getArtistInfo(artistName, callResponse),
             wikipediaUrl = getArticleUrl(artistName, callResponse),
-            isInDataBase = true
+            isInDataBase = false
         )
     }
 

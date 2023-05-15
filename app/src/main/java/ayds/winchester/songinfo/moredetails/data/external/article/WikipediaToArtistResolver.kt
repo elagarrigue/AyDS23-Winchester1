@@ -1,6 +1,5 @@
 package ayds.winchester.songinfo.moredetails.data.external.article
 
-import ayds.winchester.songinfo.moredetails.presentation.InfoSongFormat
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -17,7 +16,7 @@ interface WikipediaToArtistResolver {
     fun getArtistInfo(artistName: String, callResponse: Response<String>): String
     fun getArticleUrl(artistName: String, callResponse: Response<String>): String
 }
-internal class WikipediaToArtistResolverImpl(private val format: InfoSongFormat) : WikipediaToArtistResolver {
+internal class WikipediaToArtistResolverImpl() : WikipediaToArtistResolver {
     override fun getArtistInfo(artistName: String, callResponse: Response<String>): String {
         val query = getQuery(callResponse)
         val snippet = getSnippet(query)
@@ -38,12 +37,8 @@ internal class WikipediaToArtistResolverImpl(private val format: InfoSongFormat)
         val firstSearchResultObj =  firstSearchResult?.asJsonObject
         return firstSearchResultObj?.get(SNIPPET)
     }
-    private fun resolveInfoSong(snippet: JsonElement?, artistName: String): String{
-        val infoSong = snippet?.let {
-            val infoSong = format.formatInfoSong(snippet,artistName)
-            infoSong
-        } ?: NO_RESULT
-        return infoSong
+    private fun resolveInfoSong(snippet: JsonElement?, artistName: String): String {
+        return snippet?.let { snippet.asString.replace("\\n", "\n") } ?: NO_RESULT
     }
     override fun getArticleUrl(artistName: String, callResponse: Response<String>): String {
         val query = getQuery(callResponse)
