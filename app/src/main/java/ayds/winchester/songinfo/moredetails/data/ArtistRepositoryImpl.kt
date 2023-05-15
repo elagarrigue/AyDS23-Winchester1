@@ -7,13 +7,10 @@ import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 import java.io.IOException
 import androidx.appcompat.app.AppCompatActivity
 
-private const val NO_RESULT = "No Results"
-
 class ArtistRepositoryImpl(
     private val wikipediaLocalStorage: WikipediaLocalStorage,
     private val wikipediaArticleService: WikipediaArticleService
 ): ArtistRepository, AppCompatActivity() {
-
     override fun getArtist(artistName: String): Artist {
         var artist : Artist.WikipediaArtist? = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
         when {
@@ -28,8 +25,6 @@ class ArtistRepositoryImpl(
         }
         return artist ?: Artist.EmptyArtist
     }
-
-
     private fun Artist.WikipediaArtist.markArtistAsLocal() {
         this.isInDataBase = true
     }
