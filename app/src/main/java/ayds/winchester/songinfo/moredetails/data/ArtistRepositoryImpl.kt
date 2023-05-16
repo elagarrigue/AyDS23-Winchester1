@@ -12,7 +12,7 @@ private const val NO_RESULT = "No Results"
 class ArtistRepositoryImpl(
     private val wikipediaLocalStorage: WikipediaLocalStorage,
     private val wikipediaArticleService: WikipediaArticleService
-): ArtistRepository, AppCompatActivity() {
+): ArtistRepository {
     override  fun getArtist(artistName: String): Artist {
         var artist : Artist? = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
         if(artist == null){
