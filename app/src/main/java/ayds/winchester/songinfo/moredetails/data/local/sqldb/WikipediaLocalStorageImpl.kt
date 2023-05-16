@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
 import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 
-private const val DB_NAME = "dictionary.db"
-private const val DB_VERSION = 1
 class WikipediaLocalStorageImpl(context: Context, private val cursorToWikipediaArtistMapper: CursorToWikipediaArtistMapper,): WikipediaLocalStorage, SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     private val projection = arrayOf(
@@ -35,7 +33,7 @@ class WikipediaLocalStorageImpl(context: Context, private val cursorToWikipediaA
     private fun getArtistCursor(artist: String) : Cursor =
         readableDatabase.query(
             TABLE_ARTIST_NAME,
-            arrayOf(ID_COLUMN, ARTIST_COLUMN, INFO_COLUMN,WIKIPEDIA_URL_COLUMN),
+            projection,
             "$ARTIST_COLUMN = ?",
             arrayOf(artist),
             null,

@@ -12,20 +12,17 @@ private const val NO_RESULT = "No Results"
 
 interface InfoSongFormat{
     fun formatInfoSong(artist: Artist): String
-    fun formatInfoSong(snippet: JsonElement, artistName: String): String
 }
 class InfoSongFormatImpl() : InfoSongFormat {
+
     override fun formatInfoSong(artist: Artist): String {
         return when(artist){
             is Artist.WikipediaArtist ->
-                textToHtml(artist.artistInfo, artist.name)
+                (if (artist.isInDataBase) PREFIX_DATABASE else "") +
+                        textToHtml(artist.artistInfo, artist.name)
+
             else -> NO_RESULT
         }
-    }
-    override fun formatInfoSong(snippet: JsonElement, artistName: String): String {
-        var infoSong = snippet.asString.replace("\\n", "\n")
-        infoSong = textToHtml(infoSong, artistName)
-        return infoSong
     }
     private fun textToHtml(text: String, term: String?): String {
         val text = text.replace("\\n", "\n")

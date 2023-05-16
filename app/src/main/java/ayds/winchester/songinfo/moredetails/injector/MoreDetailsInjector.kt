@@ -23,13 +23,12 @@ object MoreDetailsInjector {
     private lateinit var presenter : MoreDetailsPresenter
 
     fun init(otherInfoView: OtherInfoView){
-        val format : InfoSongFormat = InfoSongFormatImpl()
-        initRepository(otherInfoView, format)
-        initPresenter(otherInfoView, format)
+        initRepository(otherInfoView)
+        initPresenter(otherInfoView)
     }
-    private fun initRepository(otherInfoView: OtherInfoView, format : InfoSongFormat){
+    private fun initRepository(otherInfoView: OtherInfoView){
         val wikipediaLocalStorage: WikipediaLocalStorage = generateWikipediaLocalStorage(otherInfoView)
-        val wikipediaArticleService: WikipediaArticleService = generateWikipediaTrackService(format)
+        val wikipediaArticleService: WikipediaArticleService = generateWikipediaTrackService()
         this.artistRepository = ArtistRepositoryImpl(wikipediaLocalStorage,wikipediaArticleService)
     }
 
@@ -37,9 +36,9 @@ object MoreDetailsInjector {
         val cursor : CursorToWikipediaArtistMapper = CursorToWikipediaArtistMapperImpl()
         return WikipediaLocalStorageImpl(otherInfoView as Context, cursor)
     }
-    private fun generateWikipediaTrackService(format : InfoSongFormat): WikipediaArticleService{
+    private fun generateWikipediaTrackService(): WikipediaArticleService{
         val wikipediaAPI = createWikipediaAPI()
-        val wikipediaToArtistResolver : WikipediaToArtistResolver = WikipediaToArtistResolverImpl(format)
+        val wikipediaToArtistResolver : WikipediaToArtistResolver = WikipediaToArtistResolverImpl()
         return WikipediaArticleServiceImpl(wikipediaAPI,wikipediaToArtistResolver)
     }
     private fun createWikipediaAPI(): WikipediaAPI {
@@ -48,7 +47,8 @@ object MoreDetailsInjector {
     }
     private fun createRetrofit() = Retrofit.Builder().baseUrl(WIKIPEDIA_BASE_URL).addConverterFactory(
         ScalarsConverterFactory.create()).build()
-    private fun initPresenter(otherInfoView: OtherInfoView, format : InfoSongFormat){
+    private fun initPresenter(otherInfoView: OtherInfoView){
+        val format : InfoSongFormat = InfoSongFormatImpl()
         this.presenter = MoreDetailsPresenterImpl(artistRepository,format)
         otherInfoView.setPresenter(this.presenter)
     }

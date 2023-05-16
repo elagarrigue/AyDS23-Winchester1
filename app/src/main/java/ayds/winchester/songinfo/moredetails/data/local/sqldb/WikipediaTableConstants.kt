@@ -6,6 +6,8 @@ const val INFO_COLUMN = "info"
 const val SOURCE_COLUMN = "source"
 const val WIKIPEDIA_URL_COLUMN = "url"
 const val TABLE_ARTIST_NAME = "artists"
+const val DB_NAME = "dictionary.db"
+const val DB_VERSION = 1
 
 const val createArtistTableQuery =
     "create table $TABLE_ARTIST_NAME (" +
