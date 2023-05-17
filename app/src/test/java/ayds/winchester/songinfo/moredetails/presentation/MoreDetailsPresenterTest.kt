@@ -30,10 +30,9 @@ class MoreDetailsPresenterTest{
             true
         )
 
-        val otherWindowUiState : OtherInfoUiState = mockk()
-
         every { artistRepository.getArtist("name") } returns artist
         every { infoSongFormat.formatInfoSong(artist) } returns "formated info"
+        val otherWindowUiState = OtherInfoUiState(artistInfo = "formated info", wikipediaArticleUrl = "url")
 
         val otherInfoUiStateTester: (OtherInfoUiState) -> Unit = mockk(relaxed = true)
         moreDetailsPresenter.uiStateObservable.subscribe {
