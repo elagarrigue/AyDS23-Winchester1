@@ -20,21 +20,23 @@ class MoreDetailsPresenterTest{
     Con checkear que se haya generado un UIState alcanza
     */
     @Test
-    fun `on search artist it should notify to the UI`(){
+    fun `on search artist it should notify to the UI`() {
         val artist = Artist.WikipediaArtist(
             "name",
             "info",
             "url",
             true
         )
-        every{ artistRepository.getArtist("name") } returns artist
-        val artistTester: (Artist) -> Observer<OtherInfoUiState> = mockk(relaxed = true)
-        moreDetailsPresenter.uiStateObservable.subscribe(
+        val otherWindowUiState : OtherInfoUiState = mockk()
+
+        every { artistRepository.getArtist("name") } returns artist
+        val artistTester: (OtherInfoUiState) -> Unit = mockk(relaxed = true)
+        moreDetailsPresenter.uiStateObservable.subscribe {
             artistTester(it)
-        )
+        }
 
         val result = moreDetailsPresenter.generateArtistInfo("name")
 
-        verify{ artistTester(artist) }
+        verify{ artistTester(otherWindowUiState) }
     }
 }
