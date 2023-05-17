@@ -1,9 +1,9 @@
-package ayds.winchester.songinfo.moredetails.domain.repository
+package ayds.winchester.songinfo.moredetails.data
 
-import ayds.winchester.songinfo.moredetails.data.ArtistRepositoryImpl
 import ayds.winchester.songinfo.moredetails.data.external.WikipediaArticleService
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
 import ayds.winchester.songinfo.moredetails.domain.entities.Artist
+import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
