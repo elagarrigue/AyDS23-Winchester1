@@ -1,6 +1,5 @@
 package ayds.winchester.songinfo.moredetails.presentation
 
-import ayds.observer.Observer
 import ayds.winchester.songinfo.moredetails.domain.entities.Artist
 import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import io.mockk.every
@@ -15,12 +14,6 @@ class MoreDetailsPresenterTest{
         MoreDetailsPresenterImpl(artistRepository, infoSongFormat)
     }
 
-    /*
-    Tengo que hacer el test de que se hayan emitidos los UIStates correspondientes
-    Debo comparar con el modelo de Home para ver los observers
-    Mockk de un lamda y checkear que haya sido llamado
-    Con checkear que se haya generado un UIState alcanza
-    */
     @Test
     fun `on search artist it should notify to the UI`() {
         val artist = Artist.WikipediaArtist(
