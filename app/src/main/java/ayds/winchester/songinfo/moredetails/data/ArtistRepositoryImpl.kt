@@ -19,7 +19,7 @@ class ArtistRepositoryImpl(
                 try{
                     artist = wikipediaArticleService.getArtist(artistName)
                     wikipediaLocalStorage.saveArtist(artist)
-                }catch (e1: IOException) {
+                }catch (e1: Exception) {
                 }
             }
 

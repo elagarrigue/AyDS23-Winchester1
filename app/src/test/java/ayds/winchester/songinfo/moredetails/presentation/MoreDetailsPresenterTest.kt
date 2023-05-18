@@ -5,6 +5,7 @@ import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
 class MoreDetailsPresenterTest{
@@ -36,4 +37,26 @@ class MoreDetailsPresenterTest{
 
         verify{ otherInfoUiStateTester(otherWindowUiState) }
     }
+
+    @Test
+    fun `generateArtistInfo should update the UI state with no results if the artist data is null`() {
+        val artistName = ""
+        val expectedUIState = OtherInfoUiState(
+            "https://upload.wikimedia.org/wikipedia/commons/8/8c/Wikipedia-logo-v2-es.png",
+            "",
+            "")
+
+        every { artistRepository.getArtist(artistName) } returns Artist.EmptyArtist
+
+        moreDetailsPresenter.generateArtistInfo(artistName)
+
+        val infoTester: (OtherInfoUiState) -> Unit = mockk(relaxed = true)
+        moreDetailsPresenter.uiStateObservable.subscribe {
+            infoTester(it)
+        }
+        moreDetailsPresenter.generateArtistInfo(artistName)
+
+        verify { infoTester(expectedUIState) }
+    }
+
 }
