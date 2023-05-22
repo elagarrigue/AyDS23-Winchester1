@@ -3,7 +3,8 @@ package ayds.winchester.songinfo.moredetails.presentation
 data class OtherInfoUiState(
     val wikipediaLogo: String = WIKIPEDIA_LOGO,
     val artistInfo: String = "",
-    val wikipediaArticleUrl: String = ""
+    val wikipediaArticleUrl: String = "",
+    val sourceName: String = ""
 ){
     companion object {
         const val WIKIPEDIA_LOGO =

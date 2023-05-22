@@ -1,7 +1,6 @@
 package ayds.winchester.songinfo.moredetails.presentation
 
-import ayds.winchester.songinfo.moredetails.domain.entities.Artist
-import com.google.gson.JsonElement
+import ayds.winchester.songinfo.moredetails.domain.entities.Card
 import java.util.*
 
 private const val HTML_WIDTH = "<html><div width=400>"
@@ -11,15 +10,15 @@ private const val PREFIX_DATABASE = "[*]"
 private const val NO_RESULT = "No Results"
 
 interface InfoSongFormat{
-    fun formatInfoSong(artist: Artist): String
+    fun formatInfoSong(card: Card): String
 }
 class InfoSongFormatImpl() : InfoSongFormat {
 
-    override fun formatInfoSong(artist: Artist): String {
-        return when(artist){
-            is Artist.WikipediaArtist ->
-                (if (artist.isInDataBase) PREFIX_DATABASE else "") +
-                        textToHtml(artist.artistInfo, artist.name)
+    override fun formatInfoSong(card: Card): String {
+        return when(card){
+            is Card.ArtistCard ->
+                (if (card.isInDataBase) PREFIX_DATABASE else "") +
+                        textToHtml(card.description, card.name)
 
             else -> NO_RESULT
         }

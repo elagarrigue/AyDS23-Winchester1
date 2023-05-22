@@ -3,7 +3,7 @@ package ayds.winchester.songinfo.moredetails.presentation
 import ayds.observer.Observable
 import ayds.observer.Subject
 import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
-import ayds.winchester.songinfo.moredetails.domain.entities.Artist
+import ayds.winchester.songinfo.moredetails.domain.entities.Card
 
 interface MoreDetailsPresenter{
     val uiStateObservable: Observable<OtherInfoUiState>
@@ -23,14 +23,14 @@ internal class MoreDetailsPresenterImpl(
         }.start()
     }
 
-    private fun notifyUiState(artist: Artist) {
-        val uiState = createUiState(artist)
+    private fun notifyUiState(card: Card) {
+        val uiState = createUiState(card)
         uiStateSubject.notify(uiState)
     }
-    private fun createUiState(artist: Artist): OtherInfoUiState {
-        return when(artist){
-            is Artist.WikipediaArtist -> {val info = infoSongFormat.formatInfoSong(artist)
-                OtherInfoUiState(artistInfo = info, wikipediaArticleUrl = artist.wikipediaUrl)
+    private fun createUiState(card: Card): OtherInfoUiState {
+        return when(card){
+            is Card.ArtistCard -> {val info = infoSongFormat.formatInfoSong(card)
+                OtherInfoUiState(artistInfo = info, wikipediaArticleUrl = card.infoUrl)
             }
             else -> OtherInfoUiState()
         }

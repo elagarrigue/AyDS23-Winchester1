@@ -1,8 +1,8 @@
 package ayds.winchester.songinfo.moredetails.data.local
 
-import ayds.winchester.songinfo.moredetails.domain.entities.Artist
+import ayds.winchester.songinfo.moredetails.domain.entities.Card
 
 interface WikipediaLocalStorage {
-    fun getArtistInfoFromDataBase(artistName: String): Artist.WikipediaArtist?
-    fun saveArtist(artist: Artist.WikipediaArtist)
+    fun getArtistInfoFromDataBase(artistName: String): Card.ArtistCard?
+    fun saveArtist(card: Card.ArtistCard)
 }
