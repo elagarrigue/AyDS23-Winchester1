@@ -30,7 +30,7 @@ internal class MoreDetailsPresenterImpl(
     private fun createUiState(card: Card): OtherInfoUiState {
         return when(card){
             is Card.ArtistCard -> {val info = infoSongFormat.formatInfoSong(card)
-                OtherInfoUiState(artistInfo = info, wikipediaArticleUrl = card.infoUrl)
+                OtherInfoUiState(description = info, sourceArticleUrl = card.infoUrl, sourceName = card.source.name)
             }
             else -> OtherInfoUiState()
         }

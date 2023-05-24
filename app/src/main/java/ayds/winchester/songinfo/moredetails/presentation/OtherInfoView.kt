@@ -24,6 +24,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
     private lateinit var urlButton : Button
     private lateinit var artistInfoTextView : TextView
     private lateinit var imageView : ImageView
+    private lateinit var sourceLabel: TextView
 
     private val observer: Observer<OtherInfoUiState> =
         Observer { value -> displayArtistInfo(value)
@@ -44,6 +45,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         urlButton = findViewById(R.id.openUrlButton)
         artistInfoTextView = findViewById(R.id.artistInfoPanel)
         imageView = findViewById(R.id.imageView)
+        sourceLabel = findViewById(R.id.sourceLabelTextView)
     }
 
     private fun initInjector() {
@@ -66,9 +68,10 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
     }
 
     private fun displayArtistInfo(artist: OtherInfoUiState) {
-        loadImage(artist.wikipediaLogo)
-        setText(artist.artistInfo)
-        setListener(artist.wikipediaArticleUrl)
+        loadImage(artist.sourceLogo)
+        setText(artist.description)
+        setListener(artist.sourceArticleUrl)
+        setSourceLabel(artist.sourceName)
     }
 
     private fun loadImage(imageUrl: String) {
@@ -93,6 +96,12 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(urlString)
         startActivity(intent)
+    }
+
+    private fun setSourceLabel(source: String){
+        runOnUiThread {
+            sourceLabel.text = source
+        }
     }
 
     companion object {

@@ -1,9 +1,9 @@
 package ayds.winchester.songinfo.moredetails.presentation
 
 data class OtherInfoUiState(
-    val wikipediaLogo: String = WIKIPEDIA_LOGO,
-    val artistInfo: String = "",
-    val wikipediaArticleUrl: String = "",
+    val sourceLogo: String = WIKIPEDIA_LOGO,
+    val description: String = "",
+    val sourceArticleUrl: String = "",
     val sourceName: String = ""
 ){
     companion object {
