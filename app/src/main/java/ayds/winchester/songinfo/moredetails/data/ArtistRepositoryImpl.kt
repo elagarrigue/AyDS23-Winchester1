@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 class ArtistRepositoryImpl(
     private val wikipediaLocalStorage: WikipediaLocalStorage,
     private val wikipediaArticleService: WikipediaArticleService
-): ArtistRepository, AppCompatActivity() {
+): ArtistRepository {
     override fun getArtist(artistName: String): Artist {
         var artist : Artist.WikipediaArtist? = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
         when {
@@ -19,9 +19,10 @@ class ArtistRepositoryImpl(
                 try{
                     artist = wikipediaArticleService.getArtist(artistName)
                     wikipediaLocalStorage.saveArtist(artist)
-                }catch (e1: IOException) {
+                }catch (e1: Exception) {
                 }
             }
+
         }
         return artist ?: Artist.EmptyArtist
     }
