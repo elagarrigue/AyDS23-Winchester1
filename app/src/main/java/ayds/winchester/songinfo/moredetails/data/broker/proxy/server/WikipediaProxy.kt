@@ -12,15 +12,17 @@ import java.io.IOException
 
 internal class WikipediaProxy(
     override val server: ServiceInterface,
+    // el server en este caso creo que sería el wikipediaArticleService
+    // ¿hay que modificar WikipediaArticleService para que implemente ServiceInterface?
     override val broker: Broker,
     private val wikipediaArticleService: WikipediaArticleService,
     private val wikipediaLocalStorage: WikipediaLocalStorage
 ) : ServerProxy {
 
-    override fun sendResponse(artistName: String){
-        broker.forwardResponse(getWikipediaArtist(artistName))
+    init{
+        broker.registerServer(this)
     }
-    private fun getWikipediaArtist(artistName: String): Card {
+    override fun getArtist(artistName: String): Card {
         var artist = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
         when {
             artist != null ->  artist.markArtistAsLocal()

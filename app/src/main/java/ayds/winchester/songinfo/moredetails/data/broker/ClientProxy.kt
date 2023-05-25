@@ -6,12 +6,9 @@ interface ClientProxy : ServiceInterface {
     val broker: Broker
 
     fun getArtist(artistName: String): List<Card>{
-        return this.sendRequest(artistName)
+        return broker.getArtist(artistName)
     }
 
-    fun sendRequest(artistName: String): List<Card> {
-        return broker.forwardRequest()
-    }
 }
 
 internal class ClientProxyImp(

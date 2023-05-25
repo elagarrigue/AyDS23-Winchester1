@@ -6,5 +6,5 @@ interface ServerProxy : ServiceInterface {
     val server: ServiceInterface
     val broker: Broker
 
-    fun sendResponse(artistName: String)
+    fun getArtist(artistName: String): Card
 }

@@ -2,6 +2,10 @@ package ayds.winchester.songinfo.moredetails.injector
 
 import android.content.Context
 import ayds.winchester.songinfo.moredetails.data.ArtistRepositoryImpl
+import ayds.winchester.songinfo.moredetails.data.broker.*
+import ayds.winchester.songinfo.moredetails.data.broker.ClientProxyImp
+import ayds.winchester.songinfo.moredetails.data.broker.artistBroker
+import ayds.winchester.songinfo.moredetails.data.broker.proxy.server.WikipediaProxy
 import wikipedia.external.external.WikipediaArticleService
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
 import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToWikipediaArtistMapper
@@ -13,6 +17,8 @@ import wikipedia.external.external.WikipediaInjector
 
 object MoreDetailsInjector {
 
+    private val broker : Broker = artistBroker()
+    private val clientProxy: ClientProxy = ClientProxyImp(broker)
     private lateinit var artistRepository : ArtistRepository
     private lateinit var presenter : MoreDetailsPresenter
 
@@ -23,7 +29,13 @@ object MoreDetailsInjector {
     private fun initRepository(otherInfoView: OtherInfoView){
         val wikipediaLocalStorage: WikipediaLocalStorage = generateWikipediaLocalStorage(otherInfoView)
         val wikipediaArticleService: WikipediaArticleService = WikipediaInjector.generateWikipediaService()
-        this.artistRepository = ArtistRepositoryImpl(wikipediaLocalStorage,wikipediaArticleService)
+        val wikipediaProxy : ServerProxy = WikipediaProxy(
+            server = clientProxy, //solamente para que no salte error, esto no tiene sentido
+            broker = broker,
+            wikipediaArticleService = wikipediaArticleService,
+            wikipediaLocalStorage = wikipediaLocalStorage
+        )
+        this.artistRepository = ArtistRepositoryImpl(clientProxy)
     }
 
     private fun generateWikipediaLocalStorage(otherInfoView: OtherInfoView): WikipediaLocalStorage {

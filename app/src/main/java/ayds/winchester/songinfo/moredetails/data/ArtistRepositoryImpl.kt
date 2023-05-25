@@ -10,9 +10,7 @@ import wikipedia.external.external.entities.WikipediaArtist
 import wikipedia.external.external.WikipediaArticleService
 
 class ArtistRepositoryImpl(
-    private val clientProxy: ClientProxy,
-    private val wikipediaLocalStorage: WikipediaLocalStorage,
-    private val wikipediaArticleService: WikipediaArticleService
+    private val clientProxy: ClientProxy
 ): ArtistRepository, AppCompatActivity() {
     private var index = 0
     override fun getArtist(artistName: String): Card {
@@ -20,31 +18,5 @@ class ArtistRepositoryImpl(
         val result = resultList[index]
         index = (index + 1) % resultList.size
         return result
-        /* Esto iría al WikipediaProxy
-        var artist = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
-        when {
-            artist != null ->  artist.markArtistAsLocal()
-            else -> {
-                try{
-                    val wikipediaArtist: WikipediaArtist = wikipediaArticleService.getArtist(artistName)
-                    artist = toArtist(wikipediaArtist)
-                    wikipediaLocalStorage.saveArtist(artist)
-                }catch (e1: IOException) {
-                }
-            }
-        }
-        return artist ?: Card.EmptyCard */
-    }
-    private fun Card.ArtistCard.markArtistAsLocal() {
-        this.isInDataBase = true
-    }
-
-    private fun toArtist(wikipediaArtist: WikipediaArtist): Card.ArtistCard {
-        return  Card.ArtistCard(
-                    name = wikipediaArtist.name,
-                    description = wikipediaArtist.artistInfo,
-                    infoUrl = wikipediaArtist.wikipediaUrl,
-                    isInDataBase = wikipediaArtist.isInDataBase
-                )
     }
 }

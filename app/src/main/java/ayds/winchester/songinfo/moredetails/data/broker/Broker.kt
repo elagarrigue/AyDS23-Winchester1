@@ -8,11 +8,10 @@ interface Broker {
     fun locateClient(): ClientProxy
     fun registerServer(server: ServerProxy)
     fun unregisterServer(server: ServerProxy)
-    fun forwardRequest()
-    fun forwardResponse(card: Card)
+    fun getArtist(artistName: String): List<Card>
 }
 
-internal class InfoBroker : Broker{
+internal class artistBroker : Broker{
     private val serversList : MutableList<ServerProxy> = mutableListOf()
     private lateinit var client: ClientProxy
     override fun locateServer(): ServerProxy {
@@ -31,11 +30,13 @@ internal class InfoBroker : Broker{
         serversList.remove(server)
     }
 
-    override fun forwardRequest() {
-        TODO("Not yet implemented")
+    override fun getArtist(artistName: String): List<Card> {
+        val list : MutableList<Card> = mutableListOf()
+        for(server in serversList){
+            list.add(server.getArtist(artistName))
+        }
+        return list
     }
 
-    override fun forwardResponse(card: Card){
-        TODO("Not yet implemented")
-    }
+
 }
