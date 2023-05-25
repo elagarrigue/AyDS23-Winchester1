@@ -5,8 +5,8 @@ import ayds.winchester.songinfo.moredetails.domain.entities.Card
 interface ClientProxy : ServiceInterface {
     val broker: Broker
 
-    fun sendRequest() : Card{
-        return broker.forwardRequest()
+    fun sendRequest() {
+        broker.forwardRequest()
     }
 }
 
