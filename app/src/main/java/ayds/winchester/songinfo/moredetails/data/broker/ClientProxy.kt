@@ -5,8 +5,12 @@ import ayds.winchester.songinfo.moredetails.domain.entities.Card
 interface ClientProxy : ServiceInterface {
     val broker: Broker
 
-    fun sendRequest() {
-        broker.forwardRequest()
+    fun getArtist(artistName: String): List<Card>{
+        return this.sendRequest(artistName)
+    }
+
+    fun sendRequest(artistName: String): List<Card> {
+        return broker.forwardRequest()
     }
 }
 

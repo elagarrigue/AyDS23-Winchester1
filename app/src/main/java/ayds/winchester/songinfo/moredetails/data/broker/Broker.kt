@@ -9,7 +9,7 @@ interface Broker {
     fun registerServer(server: ServerProxy)
     fun unregisterServer(server: ServerProxy)
     fun forwardRequest()
-    fun forwardResponse(): Card
+    fun forwardResponse(card: Card)
 }
 
 internal class InfoBroker : Broker{
@@ -35,7 +35,7 @@ internal class InfoBroker : Broker{
         TODO("Not yet implemented")
     }
 
-    override fun forwardResponse(): Card {
+    override fun forwardResponse(card: Card){
         TODO("Not yet implemented")
     }
 }

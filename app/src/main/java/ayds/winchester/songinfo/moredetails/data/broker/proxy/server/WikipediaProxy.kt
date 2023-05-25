@@ -3,21 +3,22 @@ package ayds.winchester.songinfo.moredetails.data.broker.proxy.server
 import ayds.winchester.songinfo.moredetails.data.broker.Broker
 import ayds.winchester.songinfo.moredetails.data.broker.ServerProxy
 import ayds.winchester.songinfo.moredetails.data.broker.ServiceInterface
+import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
 import ayds.winchester.songinfo.moredetails.domain.entities.Card
-import ayds.winchester.wikipedia.external.external.WikipediaInjector
+import wikipedia.external.external.WikipediaArticleService
+import wikipedia.external.external.entities.WikipediaArtist
+import java.io.IOException
 
 
 internal class WikipediaProxy(
     override val server: ServiceInterface,
-    override val broker: Broker
+    override val broker: Broker,
+    private val wikipediaArticleService: WikipediaArticleService,
+    private val wikipediaLocalStorage: WikipediaLocalStorage
 ) : ServerProxy {
-    private val wikipediaArticleService: WikipediaInjector
-    override fun getArtist(artistName: String): List<Card> {
-        TODO("Not yet implemented")
-    }
 
-    override fun sendResponse(){
-        broker.forwardResponse(getWikipediaArtist())
+    override fun sendResponse(artistName: String){
+        broker.forwardResponse(getWikipediaArtist(artistName))
     }
     private fun getWikipediaArtist(artistName: String): Card {
         var artist = wikipediaLocalStorage.getArtistInfoFromDataBase(artistName)
