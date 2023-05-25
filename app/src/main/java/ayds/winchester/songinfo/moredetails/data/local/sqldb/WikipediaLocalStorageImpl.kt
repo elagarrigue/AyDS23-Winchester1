@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
 import ayds.winchester.songinfo.moredetails.domain.entities.Card
 
-class WikipediaLocalStorageImpl(context: Context, private val cursorToWikipediaArtistMapper: CursorToWikipediaArtistMapper,): WikipediaLocalStorage, SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+class WikipediaLocalStorageImpl(context: Context, private val cursorToWikipediaArtistMapper: CursorToWikipediaArtistMapper): WikipediaLocalStorage, SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     private val projection = arrayOf(
         ID_COLUMN,

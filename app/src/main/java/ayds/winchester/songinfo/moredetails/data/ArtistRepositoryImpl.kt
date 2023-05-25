@@ -5,10 +5,12 @@ import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import ayds.winchester.songinfo.moredetails.domain.entities.Card
 import java.io.IOException
 import androidx.appcompat.app.AppCompatActivity
+import ayds.winchester.songinfo.moredetails.data.broker.ClientProxy
 import wikipedia.external.external.entities.WikipediaArtist
 import wikipedia.external.external.WikipediaArticleService
 
 class ArtistRepositoryImpl(
+    override val clientProxy: ClientProxy,
     private val wikipediaLocalStorage: WikipediaLocalStorage,
     private val wikipediaArticleService: WikipediaArticleService
 ): ArtistRepository, AppCompatActivity() {

@@ -14,9 +14,7 @@ import ayds.winchester.songinfo.moredetails.injector.MoreDetailsInjector
 import com.squareup.picasso.Picasso
 
 interface OtherInfoView {
-
     fun setPresenter(presenter: MoreDetailsPresenter)
-
 }
 
 class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
