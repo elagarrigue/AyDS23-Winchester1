@@ -56,4 +56,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(':wikipediaexternal')
+    implementation project(':lastfmexternal')
 }
