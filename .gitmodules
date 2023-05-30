@@ -4,3 +4,6 @@
 [submodule "libs/LastFMExternal"]
 	path = libs/LastFMExternal
 	url = https://github.com/AxelFontana/Lisboa5
+[submodule "libs/NYTExternal"]
+	path = libs/NYTExternal
+	url = https://github.com/agusdeba/NewYorkTimes-1-module

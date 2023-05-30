@@ -57,4 +57,5 @@ dependencies {
 
     implementation project(':wikipediaexternal')
     implementation project(':lastfmexternal')
+    implementation project(':nytexternal')
 }

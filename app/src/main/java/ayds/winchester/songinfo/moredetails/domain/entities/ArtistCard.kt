@@ -15,5 +15,7 @@ sealed class Card {
 }
 
 enum class Source{
-    Wikipedia
+    Wikipedia,
+    LastFM,
+    NYT
 }
