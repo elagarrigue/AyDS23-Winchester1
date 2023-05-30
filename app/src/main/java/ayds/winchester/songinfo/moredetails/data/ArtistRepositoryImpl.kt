@@ -1,22 +1,37 @@
 package ayds.winchester.songinfo.moredetails.data
 
-import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
+import ayds.winchester.songinfo.moredetails.data.local.ArtistLocalStorage
 import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import ayds.winchester.songinfo.moredetails.domain.entities.Card
 import java.io.IOException
 import androidx.appcompat.app.AppCompatActivity
-import ayds.winchester.songinfo.moredetails.data.broker.ClientProxy
-import wikipedia.external.external.entities.WikipediaArtist
-import wikipedia.external.external.WikipediaArticleService
+import ayds.winchester.songinfo.moredetails.data.broker.Broker
 
 class ArtistRepositoryImpl(
-    private val clientProxy: ClientProxy
+    private val localStorage: ArtistLocalStorage,
+    private val broker: Broker
 ): ArtistRepository, AppCompatActivity() {
-    private var index = 0
-    override fun getArtist(artistName: String): Card {
-        val resultList = clientProxy.getArtist(artistName)
-        val result = resultList[index]
-        index = (index + 1) % resultList.size
-        return result
+    override fun getArtist(artistName: String): List<Card?> {
+        var cardList: List<Card?> = localStorage.getArtistInfoFromDataBase(artistName)
+        when {
+                cardList != null ->
+                    for (card in cardList)
+                        if (card is Card.ArtistCard) card.markArtistAsLocal()
+                else -> {
+                    try{
+                        cardList = broker.getArtist(artistName)
+                        for (card in cardList){
+                           if (card is Card.ArtistCard) localStorage.saveArtist(card)
+                        }
+                    }catch (e1: IOException) {
+                    }
+            }
+        }
+        return cardList
     }
+    private fun Card.ArtistCard.markArtistAsLocal() {
+        this.isInDataBase = true
+    }
+
+
 }

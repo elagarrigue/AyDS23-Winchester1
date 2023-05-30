@@ -1,24 +1,26 @@
 package ayds.winchester.songinfo.moredetails.injector
 
 import android.content.Context
+import ayds.NY1.NewYorkTimes.external.DependenciesInjector
 import ayds.winchester.songinfo.moredetails.data.ArtistRepositoryImpl
-import ayds.winchester.songinfo.moredetails.data.broker.*
-import ayds.winchester.songinfo.moredetails.data.broker.ClientProxyImp
-import ayds.winchester.songinfo.moredetails.data.broker.artistBroker
+import ayds.winchester.songinfo.moredetails.data.broker.Broker
+import ayds.winchester.songinfo.moredetails.data.broker.BrokerImpl
+import ayds.winchester.songinfo.moredetails.data.broker.proxy.server.LastFMProxy
+import ayds.winchester.songinfo.moredetails.data.broker.proxy.server.NYTProxy
 import ayds.winchester.songinfo.moredetails.data.broker.proxy.server.WikipediaProxy
-import wikipedia.external.external.WikipediaArticleService
-import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
-import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToWikipediaArtistMapper
-import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToWikipediaArtistMapperImpl
-import ayds.winchester.songinfo.moredetails.data.local.sqldb.WikipediaLocalStorageImpl
+import ayds.winchester.songinfo.moredetails.data.local.ArtistLocalStorage
+import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToArtistMapper
+import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToArtistMapperImpl
+import ayds.winchester.songinfo.moredetails.data.local.sqldb.ArtistLocalStorageImpl
 import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import ayds.winchester.songinfo.moredetails.presentation.*
+import lisboa5lastfm.ExternalServiceInjector
+import lisboa5lastfm.artist.ArtistExternalService
+import wikipedia.external.external.WikipediaArticleService
 import wikipedia.external.external.WikipediaInjector
 
 object MoreDetailsInjector {
 
-    private val broker : Broker = artistBroker()
-    private val clientProxy: ClientProxy = ClientProxyImp(broker)
     private lateinit var artistRepository : ArtistRepository
     private lateinit var presenter : MoreDetailsPresenter
 
@@ -27,20 +29,32 @@ object MoreDetailsInjector {
         initPresenter(otherInfoView)
     }
     private fun initRepository(otherInfoView: OtherInfoView){
-        val wikipediaLocalStorage: WikipediaLocalStorage = generateWikipediaLocalStorage(otherInfoView)
-        val wikipediaArticleService: WikipediaArticleService = WikipediaInjector.generateWikipediaService()
-        val wikipediaProxy : ServerProxy = WikipediaProxy(
-            server = clientProxy, //solamente para que no salte error, esto no tiene sentido
-            broker = broker,
-            wikipediaArticleService = wikipediaArticleService,
-            wikipediaLocalStorage = wikipediaLocalStorage
-        )
-        this.artistRepository = ArtistRepositoryImpl(clientProxy)
+        val broker = initBroker()
+        val wikipediaLocalStorage: ArtistLocalStorage = generateWikipediaLocalStorage(otherInfoView)
+        this.artistRepository = ArtistRepositoryImpl(wikipediaLocalStorage, broker)
     }
 
-    private fun generateWikipediaLocalStorage(otherInfoView: OtherInfoView): WikipediaLocalStorage {
-        val cursor : CursorToWikipediaArtistMapper = CursorToWikipediaArtistMapperImpl()
-        return WikipediaLocalStorageImpl(otherInfoView as Context, cursor)
+    private fun initBroker(): Broker{
+        val broker: Broker = BrokerImpl()
+
+        val wikipediaService: WikipediaArticleService = WikipediaInjector.generateWikipediaService()
+        val wikipediaProxy = WikipediaProxy(wikipediaService)
+        broker.registerServer(wikipediaProxy)
+
+        val lastFMService : ArtistExternalService = ExternalServiceInjector.getLastFMService()
+        val lastFMProxy = LastFMProxy(lastFMService)
+        broker.registerServer(lastFMProxy)
+
+        val nytService = DependenciesInjector.init()
+        val nytProxy = NYTProxy(nytService)
+        broker.registerServer(nytProxy)
+
+        return broker
+    }
+
+    private fun generateWikipediaLocalStorage(otherInfoView: OtherInfoView): ArtistLocalStorage {
+        val cursor : CursorToArtistMapper = CursorToArtistMapperImpl()
+        return ArtistLocalStorageImpl(otherInfoView as Context, cursor)
     }
     private fun initPresenter(otherInfoView: OtherInfoView){
         val format : InfoSongFormat = InfoSongFormatImpl()

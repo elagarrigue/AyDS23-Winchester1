@@ -4,23 +4,13 @@ import ayds.winchester.songinfo.moredetails.domain.entities.Card
 
 interface Broker {
 
-    fun locateServer(): ServerProxy
-    fun locateClient(): ClientProxy
     fun registerServer(server: ServerProxy)
     fun unregisterServer(server: ServerProxy)
     fun getArtist(artistName: String): List<Card>
 }
 
-internal class artistBroker : Broker{
+internal class BrokerImpl : Broker{
     private val serversList : MutableList<ServerProxy> = mutableListOf()
-    private lateinit var client: ClientProxy
-    override fun locateServer(): ServerProxy {
-        TODO("Not yet implemented")
-    }
-
-    override fun locateClient(): ClientProxy {
-        TODO("Not yet implemented")
-    }
 
     override fun registerServer(server: ServerProxy) {
         serversList.add(server)
@@ -37,6 +27,5 @@ internal class artistBroker : Broker{
         }
         return list
     }
-
 
 }
