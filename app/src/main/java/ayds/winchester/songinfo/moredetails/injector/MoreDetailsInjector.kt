@@ -8,10 +8,10 @@ import ayds.winchester.songinfo.moredetails.data.broker.BrokerImpl
 import ayds.winchester.songinfo.moredetails.data.broker.proxy.server.LastFMProxy
 import ayds.winchester.songinfo.moredetails.data.broker.proxy.server.NYTProxy
 import ayds.winchester.songinfo.moredetails.data.broker.proxy.server.WikipediaProxy
-import ayds.winchester.songinfo.moredetails.data.local.WikipediaLocalStorage
-import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToWikipediaArtistMapper
-import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToWikipediaArtistMapperImpl
-import ayds.winchester.songinfo.moredetails.data.local.sqldb.WikipediaLocalStorageImpl
+import ayds.winchester.songinfo.moredetails.data.local.ArtistLocalStorage
+import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToArtistMapper
+import ayds.winchester.songinfo.moredetails.data.local.sqldb.CursorToArtistMapperImpl
+import ayds.winchester.songinfo.moredetails.data.local.sqldb.ArtistLocalStorageImpl
 import ayds.winchester.songinfo.moredetails.domain.repository.ArtistRepository
 import ayds.winchester.songinfo.moredetails.presentation.*
 import lisboa5lastfm.ExternalServiceInjector
@@ -30,7 +30,7 @@ object MoreDetailsInjector {
     }
     private fun initRepository(otherInfoView: OtherInfoView){
         val broker = initBroker()
-        val wikipediaLocalStorage: WikipediaLocalStorage = generateWikipediaLocalStorage(otherInfoView)
+        val wikipediaLocalStorage: ArtistLocalStorage = generateWikipediaLocalStorage(otherInfoView)
         this.artistRepository = ArtistRepositoryImpl(wikipediaLocalStorage, broker)
     }
 
@@ -52,9 +52,9 @@ object MoreDetailsInjector {
         return broker
     }
 
-    private fun generateWikipediaLocalStorage(otherInfoView: OtherInfoView): WikipediaLocalStorage {
-        val cursor : CursorToWikipediaArtistMapper = CursorToWikipediaArtistMapperImpl()
-        return WikipediaLocalStorageImpl(otherInfoView as Context, cursor)
+    private fun generateWikipediaLocalStorage(otherInfoView: OtherInfoView): ArtistLocalStorage {
+        val cursor : CursorToArtistMapper = CursorToArtistMapperImpl()
+        return ArtistLocalStorageImpl(otherInfoView as Context, cursor)
     }
     private fun initPresenter(otherInfoView: OtherInfoView){
         val format : InfoSongFormat = InfoSongFormatImpl()
