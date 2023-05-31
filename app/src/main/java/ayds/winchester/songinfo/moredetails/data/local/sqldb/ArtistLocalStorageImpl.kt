@@ -15,8 +15,8 @@ class ArtistLocalStorageImpl(context: Context, private val cursorToArtistMapper:
         ARTIST_COLUMN,
         INFO_COLUMN,
         SOURCE_URL_COLUMN,
-        SOURCE_LOGO_URL_COLUMN,
-        SOURCE_COLUMN)
+        SOURCE_COLUMN,
+        SOURCE_LOGO_URL_COLUMN)
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             createArtistTableQuery
@@ -24,9 +24,8 @@ class ArtistLocalStorageImpl(context: Context, private val cursorToArtistMapper:
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
     override fun getArtistInfoFromDataBase(artistName: String): List<Card.ArtistCard?> {
-        return this.getInfo(artistName)
+        return this.getArtistInfo(getArtistCursor(artistName))
     }
-    private fun getInfo(artist: String): List<Card.ArtistCard?> = getArtistInfo(getArtistCursor(artist))
 
     private fun getArtistInfo(cursor: Cursor) : List<Card.ArtistCard?> {
         return cursorToArtistMapper.map(cursor)
@@ -42,6 +41,7 @@ class ArtistLocalStorageImpl(context: Context, private val cursorToArtistMapper:
             "$ARTIST_COLUMN  DESC"
         )
     override fun saveArtist(card: Card.ArtistCard) {
+        println("${card.source.ordinal}")
         writableDatabase.insert(TABLE_ARTIST_NAME, null, getValues(card))
     }
     private fun getValues(card: Card.ArtistCard): ContentValues {
@@ -49,8 +49,8 @@ class ArtistLocalStorageImpl(context: Context, private val cursorToArtistMapper:
         values.put(ARTIST_COLUMN, card.name)
         values.put(INFO_COLUMN, card.description)
         values.put(SOURCE_URL_COLUMN, card.infoUrl)
-        values.put(SOURCE_LOGO_URL_COLUMN, card.sourceLogoUrl)
         values.put(SOURCE_COLUMN,  card.source.ordinal)
+        values.put(SOURCE_LOGO_URL_COLUMN, card.sourceLogoUrl)
         return values
     }
 }

@@ -45,9 +45,11 @@ object MoreDetailsInjector {
         val lastFMProxy = LastFMProxy(lastFMService)
         broker.registerServer(lastFMProxy)
 
+        /*
         val nytService = DependenciesInjector.init()
         val nytProxy = NYTProxy(nytService)
         broker.registerServer(nytProxy)
+         */
 
         return broker
     }

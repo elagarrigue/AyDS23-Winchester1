@@ -13,9 +13,9 @@ internal class CursorToArtistMapperImpl : CursorToArtistMapper{
     override fun map(cursor: Cursor): List<Card.ArtistCard?> {
         val cards = mutableListOf<Card.ArtistCard?>()
         with(cursor) {
-            if (moveToNext()) {
+            while(moveToNext()) {
                 val values = Source.values()
-                val sourceInt = cursor.getColumnIndexOrThrow(SOURCE_COLUMN)
+                val sourceInt = getInt(getColumnIndexOrThrow(SOURCE_COLUMN))
                 cards.add(
                     Card.ArtistCard(
                         source = values[sourceInt],
@@ -26,8 +26,6 @@ internal class CursorToArtistMapperImpl : CursorToArtistMapper{
                         isInDataBase = true,
                     )
                 )
-            } else {
-                null
             }
         }
         return cards

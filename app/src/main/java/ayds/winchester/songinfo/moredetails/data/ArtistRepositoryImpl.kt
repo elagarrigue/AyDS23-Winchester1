@@ -14,9 +14,9 @@ class ArtistRepositoryImpl(
     override fun getArtist(artistName: String): List<Card?> {
         var cardList: List<Card?> = localStorage.getArtistInfoFromDataBase(artistName)
         when {
-                cardList != null ->
+                !cardList.isEmpty() ->{
                     for (card in cardList)
-                        if (card is Card.ArtistCard) card.markArtistAsLocal()
+                        if (card is Card.ArtistCard) card.markArtistAsLocal()}
                 else -> {
                     try{
                         cardList = broker.getArtist(artistName)
