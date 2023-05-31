@@ -19,18 +19,18 @@ internal class MoreDetailsPresenterImpl(
     override fun generateArtistInfo(artistName: String) {
         Thread {
             val artist = artistRepository.getArtist(artistName)
-            notifyUiState(artist)
+            notifyUiState(artist.component2())
         }.start()
     }
 
-    private fun notifyUiState(card: Card) {
+    private fun notifyUiState(card: Card?) {
         val uiState = createUiState(card)
         uiStateSubject.notify(uiState)
     }
-    private fun createUiState(card: Card): OtherInfoUiState {
+    private fun createUiState(card: Card?): OtherInfoUiState {
         return when(card){
             is Card.ArtistCard -> {val info = infoSongFormat.formatInfoSong(card)
-                OtherInfoUiState(description = info, sourceArticleUrl = card.infoUrl, sourceName = card.source.name)
+                OtherInfoUiState(sourceLogo = card.sourceLogoUrl ,description = info, sourceArticleUrl = card.infoUrl, sourceName = card.source.name)
             }
             else -> OtherInfoUiState()
         }
