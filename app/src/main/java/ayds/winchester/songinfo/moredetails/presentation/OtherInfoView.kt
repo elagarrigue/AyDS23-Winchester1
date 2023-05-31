@@ -23,10 +23,16 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
     private lateinit var artistInfoTextView : TextView
     private lateinit var imageView : ImageView
     private lateinit var sourceLabel: TextView
+    private val viewPagerAdapter : ViewPagerAdapterImp() 
 
-    private val observer: Observer<OtherInfoUiState> =
-        Observer { value -> displayArtistInfo(value)
+    private val observer: Observer<List<OtherInfoUiState>> =
+        Observer{ value -> for(element in value){
+            displayArtistInfo(element)
         }
+
+        }
+//        Observer { value -> displayArtistInfo(value)
+//        }
 
 
 
@@ -34,7 +40,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.card_pager)
         //setContentView(R.layout.activity_other_info)
-        initProperties()
+        //initProperties()
         initInjector()
         initObservers()
         generateArtistInfo()

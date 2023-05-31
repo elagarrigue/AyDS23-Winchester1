@@ -58,7 +58,7 @@ class ViewPagerAdapterImp(
     private fun openUrlInExternalApp(urlString: String){
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(urlString)
-        startActivity(intent)
+        //startActivity(intent)
     }
 
 }
