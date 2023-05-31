@@ -54,6 +54,11 @@ dependencies {
     implementation 'androidx.core:core-ktx:+'
     implementation 'androidx.core:core-ktx:+'
 
+    // para la vista de las cards
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation 'me.relex:circleindicator:2.1.6'
+
+
     testImplementation 'junit:junit:4.13.2'
     testImplementation "io.mockk:mockk:1.12.3"
 
