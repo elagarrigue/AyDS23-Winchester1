@@ -32,7 +32,8 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_other_info)
+        setContentView(R.layout.card_pager)
+        //setContentView(R.layout.activity_other_info)
         initProperties()
         initInjector()
         initObservers()
