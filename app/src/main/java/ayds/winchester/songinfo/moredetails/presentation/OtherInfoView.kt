@@ -45,6 +45,8 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         //setContentView(R.layout.activity_other_info)
         //initProperties()
 
+        initInjector()
+        initObservers()
 
         val viewPager = findViewById<ViewPager2>(R.id.view_pager2)
         viewPager.adapter = viewPagerAdapter
@@ -52,8 +54,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
 
         val indicator = findViewById<CircleIndicator3>(R.id.indicator)
         indicator.setViewPager(viewPager)
-        initInjector()
-        initObservers()
+
         generateArtistInfo()
     }
 

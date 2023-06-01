@@ -2,6 +2,7 @@ package ayds.winchester.songinfo.moredetails.presentation
 
 import android.content.Intent
 import android.net.Uri
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,7 +41,7 @@ class ViewPagerAdapterImpl() : ViewPagerAdapter, RecyclerView.Adapter<ViewPagerA
 
     override fun onBindViewHolder(holder: Pager2ViewHolder, position: Int) {
         setListener(holder.urlButton, urlButtonList[position])
-        holder.artistInfoTextView.text = artistInfoList[position]
+        holder.artistInfoTextView.text = Html.fromHtml(artistInfoList[position])
         loadImage(holder.imageView, sourceLogoList[position])
         holder.sourceLabel.text = sourceNameList[position]
     }
