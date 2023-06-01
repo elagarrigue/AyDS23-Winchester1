@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import ayds.winchester.songinfo.R
 import com.squareup.picasso.Picasso
@@ -17,7 +18,7 @@ import com.squareup.picasso.Picasso
 interface ViewPagerAdapter{
 }
 
-class ViewPagerAdapterImpl() : ViewPagerAdapter, RecyclerView.Adapter<ViewPagerAdapterImpl.Pager2ViewHolder>() {
+class ViewPagerAdapterImpl(private val activity: AppCompatActivity) : ViewPagerAdapter, RecyclerView.Adapter<ViewPagerAdapterImpl.Pager2ViewHolder>() {
 
     private val urlButtonList: MutableList<String> = mutableListOf()
     private val artistInfoList: MutableList<String> = mutableListOf()
@@ -32,6 +33,7 @@ class ViewPagerAdapterImpl() : ViewPagerAdapter, RecyclerView.Adapter<ViewPagerA
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Pager2ViewHolder {
+        println("ESTOY EN onCreateViewHolder")
         return Pager2ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.activity_other_info, parent, false))
     }
 
@@ -40,6 +42,7 @@ class ViewPagerAdapterImpl() : ViewPagerAdapter, RecyclerView.Adapter<ViewPagerA
     }
 
     override fun onBindViewHolder(holder: Pager2ViewHolder, position: Int) {
+        println("ESTOY EN onBindViewHolder")
         setListener(holder.urlButton, urlButtonList[position])
         holder.artistInfoTextView.text = Html.fromHtml(artistInfoList[position])
         loadImage(holder.imageView, sourceLogoList[position])
@@ -59,7 +62,7 @@ class ViewPagerAdapterImpl() : ViewPagerAdapter, RecyclerView.Adapter<ViewPagerA
     private fun openUrlInExternalApp(urlString: String){
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(urlString)
-        //startActivity(intent)
+        activity.startActivity(intent)
     }
 
     fun addUrlButton(url: String) {
@@ -70,6 +73,7 @@ class ViewPagerAdapterImpl() : ViewPagerAdapter, RecyclerView.Adapter<ViewPagerA
     }
     fun addSourceLogo(sourceLogo: String){
         sourceLogoList.add(sourceLogo)
+        println("CONSEGUI EL LOGO $sourceLogo")
     }
 
     fun addSourceName(sourceName: String){

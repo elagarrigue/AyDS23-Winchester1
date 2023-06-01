@@ -26,7 +26,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
     private lateinit var artistInfoTextView : TextView
     private lateinit var imageView : ImageView
     private lateinit var sourceLabel: TextView
-    private val viewPagerAdapter = ViewPagerAdapterImpl()
+    private val viewPagerAdapter = ViewPagerAdapterImpl(this)
 
     private val observer: Observer<List<OtherInfoUiState>> =
         Observer{ value -> for(element in value){
@@ -89,6 +89,9 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         viewPagerAdapter.addUrlButton(artist.sourceArticleUrl)
         viewPagerAdapter.addArtistInfo(artist.description)
         viewPagerAdapter.addSourceName(artist.sourceName)
+        this.runOnUiThread {
+            viewPagerAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun loadImage(imageUrl: String) {
