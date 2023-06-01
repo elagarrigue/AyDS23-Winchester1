@@ -16,12 +16,12 @@ import com.squareup.picasso.Picasso
 interface ViewPagerAdapter{
 }
 
-class ViewPagerAdapterImp(
-    private var urlButton: List<String>,
-    private var artistInfo: List<String>,
-    private var sourceLogo: List<String>,
-    private var sourceName: List<String>
-): ViewPagerAdapter, RecyclerView.Adapter<ViewPagerAdapterImp.Pager2ViewHolder>() {
+class ViewPagerAdapterImpl() : ViewPagerAdapter, RecyclerView.Adapter<ViewPagerAdapterImpl.Pager2ViewHolder>() {
+
+    private val urlButtonList: MutableList<String> = mutableListOf()
+    private val artistInfoList: MutableList<String> = mutableListOf()
+    private val sourceLogoList: MutableList<String> = mutableListOf()
+    private val sourceNameList: MutableList<String> = mutableListOf()
 
     inner class Pager2ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val urlButton : Button = itemView.findViewById(R.id.openUrlButton)
@@ -35,14 +35,14 @@ class ViewPagerAdapterImp(
     }
 
     override fun getItemCount(): Int {
-        return artistInfo.size
+        return artistInfoList.size
     }
 
     override fun onBindViewHolder(holder: Pager2ViewHolder, position: Int) {
-        setListener(holder.urlButton, urlButton[position])
-        holder.artistInfoTextView.text = artistInfo[position]
-        loadImage(holder.imageView, sourceLogo[position])
-        holder.sourceLabel.text = sourceName[position]
+        setListener(holder.urlButton, urlButtonList[position])
+        holder.artistInfoTextView.text = artistInfoList[position]
+        loadImage(holder.imageView, sourceLogoList[position])
+        holder.sourceLabel.text = sourceNameList[position]
     }
 
     private fun loadImage(imageView: ImageView, imageUrl: String) {
@@ -59,6 +59,20 @@ class ViewPagerAdapterImp(
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(urlString)
         //startActivity(intent)
+    }
+
+    fun addUrlButton(url: String) {
+        urlButtonList.add(url)
+    }
+    fun addArtistInfo(artistInfo: String){
+        artistInfoList.add(artistInfo)
+    }
+    fun addSourceLogo(sourceLogo: String){
+        sourceLogoList.add(sourceLogo)
+    }
+
+    fun addSourceName(sourceName: String){
+        sourceNameList.add(sourceName)
     }
 
 }

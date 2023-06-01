@@ -8,10 +8,13 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager2.widget.ViewPager2
 import ayds.observer.Observer
 import ayds.winchester.songinfo.R
 import ayds.winchester.songinfo.moredetails.injector.MoreDetailsInjector
 import com.squareup.picasso.Picasso
+import me.relex.circleindicator.CircleIndicator
+import me.relex.circleindicator.CircleIndicator3
 
 interface OtherInfoView {
     fun setPresenter(presenter: MoreDetailsPresenter)
@@ -23,7 +26,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
     private lateinit var artistInfoTextView : TextView
     private lateinit var imageView : ImageView
     private lateinit var sourceLabel: TextView
-    private val viewPagerAdapter : ViewPagerAdapterImp() 
+    private val viewPagerAdapter = ViewPagerAdapterImpl()
 
     private val observer: Observer<List<OtherInfoUiState>> =
         Observer{ value -> for(element in value){
@@ -41,6 +44,14 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         setContentView(R.layout.card_pager)
         //setContentView(R.layout.activity_other_info)
         //initProperties()
+
+
+        val viewPager = findViewById<ViewPager2>(R.id.view_pager2)
+        viewPager.adapter = viewPagerAdapter
+        viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+
+        val indicator = findViewById<CircleIndicator3>(R.id.indicator)
+        indicator.setViewPager(viewPager)
         initInjector()
         initObservers()
         generateArtistInfo()
@@ -73,10 +84,10 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
     }
 
     private fun displayArtistInfo(artist: OtherInfoUiState) {
-        loadImage(artist.sourceLogo)
-        setText(artist.description)
-        setListener(artist.sourceArticleUrl)
-        setSourceLabel(artist.sourceName)
+        viewPagerAdapter.addSourceLogo(artist.sourceLogo)
+        viewPagerAdapter.addUrlButton(artist.sourceArticleUrl)
+        viewPagerAdapter.addArtistInfo(artist.description)
+        viewPagerAdapter.addSourceName(artist.sourceName)
     }
 
     private fun loadImage(imageUrl: String) {

@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
 
-    <me.relex.circleindicator.CircleIndicator
+    <me.relex.circleindicator.CircleIndicator3
         android:id="@+id/indicator"
         android:layout_width="match_parent"
         android:layout_height="48dp"
