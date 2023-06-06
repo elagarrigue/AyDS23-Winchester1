@@ -24,7 +24,9 @@ internal class CardsBrokerImpl : CardsBroker{
     override fun getCards(cardName: String): List<Card> {
         val list : MutableList<Card> = mutableListOf()
         for(server in serversList){
-            list.add(server.getCardFormService(cardName))
+            val card = server.getCardFormService(cardName)
+            if (card is Card.ArtistCard)
+                list.add(card)
         }
         return list
     }
