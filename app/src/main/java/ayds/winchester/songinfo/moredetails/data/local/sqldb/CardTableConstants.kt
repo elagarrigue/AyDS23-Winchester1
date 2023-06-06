@@ -10,7 +10,7 @@ const val TABLE_ARTIST_NAME = "artists"
 const val DB_NAME = "dictionary.db"
 const val DB_VERSION = 1
 
-const val createArtistTableQuery =
+const val createCardTableQuery =
     "create table $TABLE_ARTIST_NAME (" +
             "$ID_COLUMN INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "$ARTIST_COLUMN string, " +

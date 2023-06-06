@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import ayds.winchester.songinfo.R
+import ayds.winchester.songinfo.moredetails.domain.entities.Source
 import com.squareup.picasso.Picasso
 
 interface ViewPagerAdapter{
@@ -33,7 +34,6 @@ class ViewPagerAdapterImpl(private val activity: AppCompatActivity) : ViewPagerA
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Pager2ViewHolder {
-        println("ESTOY EN onCreateViewHolder")
         return Pager2ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.activity_other_info, parent, false))
     }
 
@@ -42,7 +42,6 @@ class ViewPagerAdapterImpl(private val activity: AppCompatActivity) : ViewPagerA
     }
 
     override fun onBindViewHolder(holder: Pager2ViewHolder, position: Int) {
-        println("ESTOY EN onBindViewHolder")
         setListener(holder.urlButton, urlButtonList[position])
         holder.artistInfoTextView.text = Html.fromHtml(artistInfoList[position])
         loadImage(holder.imageView, sourceLogoList[position])
@@ -73,11 +72,16 @@ class ViewPagerAdapterImpl(private val activity: AppCompatActivity) : ViewPagerA
     }
     fun addSourceLogo(sourceLogo: String){
         sourceLogoList.add(sourceLogo)
-        println("CONSEGUI EL LOGO $sourceLogo")
     }
 
     fun addSourceName(sourceName: String){
-        sourceNameList.add(sourceName)
+        var source = ""
+        when (sourceName){
+            Source.Wikipedia.name -> source = "Wikipedia"
+            Source.LastFM.name -> source = "Last FM"
+            Source.NYT.name -> source = "New York Times"
+        }
+        sourceNameList.add(source)
     }
 
 }

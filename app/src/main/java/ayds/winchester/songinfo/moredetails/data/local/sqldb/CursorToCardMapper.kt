@@ -4,11 +4,11 @@ import android.database.Cursor
 import ayds.winchester.songinfo.moredetails.domain.entities.Card
 import ayds.winchester.songinfo.moredetails.domain.entities.Source
 
-interface CursorToArtistMapper{
+interface CursorToCardMapper{
     fun map(cursor: Cursor): List<Card.ArtistCard?>
 }
 
-internal class CursorToArtistMapperImpl : CursorToArtistMapper{
+internal class CursorToCardMapperImpl : CursorToCardMapper{
 
     override fun map(cursor: Cursor): List<Card.ArtistCard?> {
         val cards = mutableListOf<Card.ArtistCard?>()

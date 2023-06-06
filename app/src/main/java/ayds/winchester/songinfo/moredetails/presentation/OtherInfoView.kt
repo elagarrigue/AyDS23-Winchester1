@@ -1,19 +1,11 @@
 package ayds.winchester.songinfo.moredetails.presentation
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.text.Html
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import ayds.observer.Observer
 import ayds.winchester.songinfo.R
 import ayds.winchester.songinfo.moredetails.injector.MoreDetailsInjector
-import com.squareup.picasso.Picasso
-import me.relex.circleindicator.CircleIndicator
 import me.relex.circleindicator.CircleIndicator3
 
 interface OtherInfoView {
@@ -22,28 +14,17 @@ interface OtherInfoView {
 
 class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
     private lateinit var presenter: MoreDetailsPresenter
-    private lateinit var urlButton : Button
-    private lateinit var artistInfoTextView : TextView
-    private lateinit var imageView : ImageView
-    private lateinit var sourceLabel: TextView
     private val viewPagerAdapter = ViewPagerAdapterImpl(this)
 
     private val observer: Observer<List<OtherInfoUiState>> =
         Observer{ value -> for(element in value){
             displayArtistInfo(element)
         }
-
         }
-//        Observer { value -> displayArtistInfo(value)
-//        }
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.card_pager)
-        //setContentView(R.layout.activity_other_info)
-        //initProperties()
 
         initInjector()
         initObservers()
@@ -55,14 +36,7 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         val indicator = findViewById<CircleIndicator3>(R.id.indicator)
         indicator.setViewPager(viewPager)
 
-        generateArtistInfo()
-    }
-
-    private fun initProperties(){
-        urlButton = findViewById(R.id.openUrlButton)
-        artistInfoTextView = findViewById(R.id.artistInfoPanel)
-        imageView = findViewById(R.id.imageView)
-        sourceLabel = findViewById(R.id.sourceLabelTextView)
+        generateCards()
     }
 
     private fun initInjector() {
@@ -73,9 +47,9 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         presenter.uiStateObservable.subscribe(observer)
     }
 
-    private fun generateArtistInfo() {
+    private fun generateCards() {
         val artistName = getArtistNameFromIntent()
-        presenter.generateArtistInfo(artistName)
+        presenter.generateCards(artistName)
     }
 
     private fun getArtistNameFromIntent() = intent.getStringExtra(ARTIST_NAME_EXTRA).toString()
@@ -91,36 +65,6 @@ class OtherInfoViewActivity(): AppCompatActivity(), OtherInfoView{
         viewPagerAdapter.addSourceName(artist.sourceName)
         this.runOnUiThread {
             viewPagerAdapter.notifyDataSetChanged()
-        }
-    }
-
-    private fun loadImage(imageUrl: String) {
-        runOnUiThread {
-            Picasso.get().load(imageUrl).into(imageView)
-        }
-    }
-
-    private fun setText(finalText: String?) {
-        runOnUiThread {
-            artistInfoTextView.text = Html.fromHtml(finalText)
-        }
-    }
-
-    private fun setListener(urlString: String){
-        urlButton.setOnClickListener {
-            openUrlInExternalApp(urlString)
-        }
-    }
-
-    private fun openUrlInExternalApp(urlString: String){
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(urlString)
-        startActivity(intent)
-    }
-
-    private fun setSourceLabel(source: String){
-        runOnUiThread {
-            sourceLabel.text = source
         }
     }
 

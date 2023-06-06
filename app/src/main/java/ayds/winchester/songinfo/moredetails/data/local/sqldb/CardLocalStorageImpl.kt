@@ -5,10 +5,10 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import ayds.winchester.songinfo.moredetails.data.local.ArtistLocalStorage
+import ayds.winchester.songinfo.moredetails.data.local.CardLocalStorage
 import ayds.winchester.songinfo.moredetails.domain.entities.Card
 
-class ArtistLocalStorageImpl(context: Context, private val cursorToArtistMapper: CursorToArtistMapper): ArtistLocalStorage, SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+class CardLocalStorageImpl(context: Context, private val cursorToArtistMapper: CursorToCardMapper): CardLocalStorage, SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
     private val projection = arrayOf(
         ID_COLUMN,
@@ -19,28 +19,28 @@ class ArtistLocalStorageImpl(context: Context, private val cursorToArtistMapper:
         SOURCE_LOGO_URL_COLUMN)
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
-            createArtistTableQuery
+            createCardTableQuery
         )
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
-    override fun getArtistInfoFromDataBase(artistName: String): List<Card.ArtistCard?> {
-        return this.getArtistInfo(getArtistCursor(artistName))
+    override fun getCardsFromDataBase(cardName: String): List<Card.ArtistCard?> {
+        return this.getCard(getCardCursor(cardName))
     }
 
-    private fun getArtistInfo(cursor: Cursor) : List<Card.ArtistCard?> {
+    private fun getCard(cursor: Cursor) : List<Card.ArtistCard?> {
         return cursorToArtistMapper.map(cursor)
     }
-    private fun getArtistCursor(artist: String) : Cursor =
+    private fun getCardCursor(cardName: String) : Cursor =
         readableDatabase.query(
             TABLE_ARTIST_NAME,
             projection,
             "$ARTIST_COLUMN = ?",
-            arrayOf(artist),
+            arrayOf(cardName),
             null,
             null,
             "$ARTIST_COLUMN  DESC"
         )
-    override fun saveArtist(card: Card.ArtistCard) {
+    override fun saveCard(card: Card.ArtistCard) {
         println("${card.source.ordinal}")
         writableDatabase.insert(TABLE_ARTIST_NAME, null, getValues(card))
     }

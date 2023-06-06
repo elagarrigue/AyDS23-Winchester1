@@ -1,15 +1,16 @@
 package ayds.winchester.songinfo.moredetails.data.broker
 
+import ayds.winchester.songinfo.moredetails.data.broker.proxy.server.ServerProxy
 import ayds.winchester.songinfo.moredetails.domain.entities.Card
 
-interface Broker {
+interface CardsBroker {
 
     fun registerServer(server: ServerProxy)
     fun unregisterServer(server: ServerProxy)
-    fun getArtist(artistName: String): List<Card>
+    fun getCards(cardName: String): List<Card>
 }
 
-internal class BrokerImpl : Broker{
+internal class CardsBrokerImpl : CardsBroker{
     private val serversList : MutableList<ServerProxy> = mutableListOf()
 
     override fun registerServer(server: ServerProxy) {
@@ -20,10 +21,10 @@ internal class BrokerImpl : Broker{
         serversList.remove(server)
     }
 
-    override fun getArtist(artistName: String): List<Card> {
+    override fun getCards(cardName: String): List<Card> {
         val list : MutableList<Card> = mutableListOf()
         for(server in serversList){
-            list.add(server.getArtist(artistName))
+            list.add(server.getCardFormService(cardName))
         }
         return list
     }
