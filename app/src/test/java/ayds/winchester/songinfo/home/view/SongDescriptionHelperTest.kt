@@ -2,13 +2,17 @@ package ayds.winchester.songinfo.home.view
 
 import ayds.winchester.songinfo.home.model.entities.Song
 import ayds.winchester.songinfo.home.model.entities.Song.SpotifySong
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert
 import org.junit.Test
 
 class SongDescriptionHelperTest {
+    private val mockReleaseDateFactory = mockk<ReleaseDateFactory>(relaxUnitFun = true){
+        every { getReleaseDate(any(), any()) } returns DayDate("1992-01-01")
+    }
 
-    private val songDescriptionHelper by lazy { SongDescriptionHelperImpl() }
+    private val songDescriptionHelper by lazy { SongDescriptionHelperImpl(mockReleaseDateFactory) }
 
     @Test
     fun `given a local song it should return the description`() {
@@ -18,6 +22,7 @@ class SongDescriptionHelperTest {
             "Stone Temple Pilots",
             "Core",
             "1992-01-01",
+            "day",
             "url",
             "url",
             true,
@@ -29,7 +34,7 @@ class SongDescriptionHelperTest {
             "Song: Plush [*]\n" +
                     "Artist: Stone Temple Pilots\n" +
                     "Album: Core\n" +
-                    "Year: 1992"
+                    "Release Date: 01/01/1992\n"
 
         Assert.assertEquals(expected, result)
     }
@@ -42,6 +47,7 @@ class SongDescriptionHelperTest {
             "Stone Temple Pilots",
             "Core",
             "1992-01-01",
+            "day",
             "url",
             "url",
             false,
@@ -53,7 +59,7 @@ class SongDescriptionHelperTest {
             "Song: Plush \n" +
                     "Artist: Stone Temple Pilots\n" +
                     "Album: Core\n" +
-                    "Year: 1992"
+                    "Release Date: 01/01/1992\n"
 
         Assert.assertEquals(expected, result)
     }
