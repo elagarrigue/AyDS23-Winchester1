@@ -43,7 +43,7 @@ class HomeControllerTest {
     @Test
     fun `on more details event should navigate to more details`() {
         every { homeView.uiState } returns HomeUiState(songId = "id")
-        val song: Song = mockk { every { artistName } returns "artist" }
+        val song: Song = mockk<Song.SpotifySong>{ every { artistName } returns "artist" }
         every { homeModel.getSongById("id") } returns song
 
         onActionSubject.notify(HomeUiEvent.MoreDetails)
