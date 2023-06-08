@@ -5,14 +5,19 @@ import ayds.winchester.songinfo.moredetails.domain.entities.Source
 import lisboa5lastfm.Artist
 import lisboa5lastfm.LASTFM_LOGO_URL
 import lisboa5lastfm.artist.ArtistExternalService
+import java.io.IOException
 
 internal class LastFMProxy(
     private val lastFMArticleService: ArtistExternalService
 ) : ServerProxy {
 
     override fun getCardFormService(cardName: String): Card {
-        val lastFMArtist = lastFMArticleService.getArtistFromLastFMAPI(cardName)
-        return toCard(lastFMArtist)
+        return try{
+            val lastFMArtist = lastFMArticleService.getArtistFromLastFMAPI(cardName)
+            toCard(lastFMArtist)
+        }catch (e1: IOException) {
+            Card.EmptyCard
+        }
     }
 
     private fun toCard(lastFMArtist: Artist.ArtistData?): Card {

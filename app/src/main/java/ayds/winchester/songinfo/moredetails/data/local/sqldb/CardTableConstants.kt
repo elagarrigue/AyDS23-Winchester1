@@ -6,12 +6,12 @@ const val INFO_COLUMN = "info"
 const val SOURCE_URL_COLUMN = "url"
 const val SOURCE_COLUMN = "source"
 const val SOURCE_LOGO_URL_COLUMN = "sourcelogourl"
-const val TABLE_ARTIST_NAME = "artists"
+const val TABLE_CARD_NAME = "cards"
 const val DB_NAME = "dictionary.db"
 const val DB_VERSION = 1
 
 const val createCardTableQuery =
-    "create table $TABLE_ARTIST_NAME (" +
+    "create table $TABLE_CARD_NAME (" +
             "$ID_COLUMN INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "$ARTIST_COLUMN string, " +
             "$INFO_COLUMN string, " +

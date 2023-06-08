@@ -18,12 +18,9 @@ class CardRepositoryImpl(
                     for (card in cardList)
                         if (card is Card.ArtistCard) card.markCardAsLocal()}
                 else -> {
-                    try{
-                        cardList = broker.getCards(cardName)
-                        for (card in cardList){
-                           if (card is Card.ArtistCard) localStorage.saveCard(card)
-                        }
-                    }catch (e1: IOException) {
+                    cardList = broker.getCards(cardName)
+                    for (card in cardList){
+                        if (card is Card.ArtistCard) localStorage.saveCard(card)
                     }
             }
         }

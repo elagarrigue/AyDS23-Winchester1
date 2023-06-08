@@ -5,14 +5,19 @@ import ayds.winchester.songinfo.moredetails.domain.entities.Source
 import wikipedia.external.external.WikipediaArticleService
 import wikipedia.external.external.entities.WIKIPEDIA_LOGO
 import wikipedia.external.external.entities.WikipediaArtist
+import java.io.IOException
 
 internal class WikipediaProxy(
     private val wikipediaArticleService: WikipediaArticleService
 ) : ServerProxy {
 
     override fun getCardFormService(cardName: String): Card {
-        val wikipediaArtist = wikipediaArticleService.getArtist(cardName)
-        return toCard(wikipediaArtist)
+        return try{
+            val wikipediaArtist = wikipediaArticleService.getArtist(cardName)
+            toCard(wikipediaArtist)
+        }catch (e1: IOException) {
+            Card.EmptyCard
+        }
     }
 
     private fun toCard(wikipediaArtist: WikipediaArtist): Card.ArtistCard {

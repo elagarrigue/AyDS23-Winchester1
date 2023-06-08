@@ -32,7 +32,7 @@ class CardLocalStorageImpl(context: Context, private val cursorToArtistMapper: C
     }
     private fun getCardCursor(cardName: String) : Cursor =
         readableDatabase.query(
-            TABLE_ARTIST_NAME,
+            TABLE_CARD_NAME,
             projection,
             "$ARTIST_COLUMN = ?",
             arrayOf(cardName),
@@ -42,7 +42,7 @@ class CardLocalStorageImpl(context: Context, private val cursorToArtistMapper: C
         )
     override fun saveCard(card: Card.ArtistCard) {
         println("${card.source.ordinal}")
-        writableDatabase.insert(TABLE_ARTIST_NAME, null, getValues(card))
+        writableDatabase.insert(TABLE_CARD_NAME, null, getValues(card))
     }
     private fun getValues(card: Card.ArtistCard): ContentValues {
         val values = ContentValues()
