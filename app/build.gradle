@@ -1,10 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     buildToolsVersion "30.0.3"
 
     defaultConfig {
@@ -48,6 +49,16 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
     implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.core:core-ktx:+'
+
+    // para la vista de las cards
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+    implementation 'me.relex:circleindicator:2.1.6'
+    implementation 'androidx.core:core-ktx:+'
+
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "io.mockk:mockk:1.12.3"
@@ -56,4 +67,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(':wikipediaexternal')
+    implementation project(':lastfmexternal')
+    implementation project(':nytexternal')
 }

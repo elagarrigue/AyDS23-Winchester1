@@ -6,7 +6,7 @@ sealed class Card {
         val name : String,
         var description : String,
         var infoUrl: String,
-        var source: Source = Source.Wikipedia,
+        var source: Source,
         var sourceLogoUrl: String = "",
         var isInDataBase : Boolean
     ): Card()
@@ -15,5 +15,7 @@ sealed class Card {
 }
 
 enum class Source{
-    Wikipedia
+    Wikipedia,
+    LastFM,
+    NYT
 }

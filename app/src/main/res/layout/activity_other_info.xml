@@ -49,7 +49,7 @@
 
     <TextView
         android:id="@+id/sourceLabelTextView"
-        android:layout_width="92dp"
+        android:layout_width="110dp"
         android:layout_height="20dp"
         android:text="Source: "
         app:layout_constraintBottom_toBottomOf="parent"
