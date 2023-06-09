@@ -1,0 +1,9 @@
+[submodule "libs/WikipediaExternal"]
+	path = libs/WikipediaExternal
+	url = https://github.com/MateChola/AyDS-Winchester1-Wikipedia.git
+[submodule "libs/LastFMExternal"]
+	path = libs/LastFMExternal
+	url = https://github.com/AxelFontana/Lisboa5
+[submodule "libs/NYTExternal"]
+	path = libs/NYTExternal
+	url = https://github.com/agusdeba/NewYorkTimes-1-module

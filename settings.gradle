@@ -1,3 +1,9 @@
 include ':app'
 include 'observer'
 rootProject.name = "AK Winchester"
+include ':wikipediaexternal'
+project(':wikipediaexternal').projectDir = new File('libs/WikipediaExternal')
+include ':lastfmexternal'
+project(':lastfmexternal').projectDir = new File('libs/LastFMExternal')
+include ':nytexternal'
+project(':nytexternal').projectDir = new File('libs/NYTExternal')
